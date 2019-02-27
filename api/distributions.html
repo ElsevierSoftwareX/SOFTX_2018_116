@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>viroconcom.distributions module &#8212; viroconcom  documentation</title>
+    <link rel="stylesheet" href="../_static/pydoctheme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link rel="shortcut icon" type="image/png" href="../_static/mini_logo.png" />
+    <meta name="viewport" content="width=device-width,initial-scale=0.8">
+    
+    
+
+  </head><body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="responsive-menu"><a href="#sidebar-anchor" title="Navigation">&#9776;</a></li>
+        <li><a href="../index.html">viroconcom  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-viroconcom.distributions">
+<span id="viroconcom-distributions-module"></span><h1>viroconcom.distributions module<a class="headerlink" href="#module-viroconcom.distributions" title="Permalink to this headline">¶</a></h1>
+<p>Uni- and multivariate distributions.</p>
+<dl class="class">
+<dt id="viroconcom.distributions.Distribution">
+<em class="property">class </em><code class="descclassname">viroconcom.distributions.</code><code class="descname">Distribution</code><a class="reference internal" href="../_modules/viroconcom/distributions.html#Distribution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.Distribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/abc.html#abc.ABC" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<p>Abstract base class for distributions.</p>
+<dl class="method">
+<dt id="viroconcom.distributions.Distribution.cdf">
+<code class="descname">cdf</code><span class="sig-paren">(</span><em>x</em>, <em>rv_values</em>, <em>dependency</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/distributions.html#Distribution.cdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.Distribution.cdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the cumulative distribution function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="viroconcom.distributions.Distribution.i_cdf">
+<code class="descname">i_cdf</code><span class="sig-paren">(</span><em>probabilities</em>, <em>rv_values</em>, <em>dependency</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/distributions.html#Distribution.i_cdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.Distribution.i_cdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate percent-point function. (inverse cumulative distribution function)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="viroconcom.distributions.ParametricDistribution">
+<em class="property">class </em><code class="descclassname">viroconcom.distributions.</code><code class="descname">ParametricDistribution</code><span class="sig-paren">(</span><em>shape</em>, <em>loc</em>, <em>scale</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/distributions.html#ParametricDistribution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.ParametricDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#viroconcom.distributions.Distribution" title="viroconcom.distributions.Distribution"><code class="xref py py-class docutils literal notranslate"><span class="pre">viroconcom.distributions.Distribution</span></code></a>, <a class="reference external" href="https://docs.python.org/3.6/library/abc.html#abc.ABC" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<p>Abstract base class for parametric distributions.</p>
+<dl class="attribute">
+<dt id="viroconcom.distributions.ParametricDistribution.shape">
+<code class="descname">shape</code><a class="headerlink" href="#viroconcom.distributions.ParametricDistribution.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Param</em> – The shape parameter.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="viroconcom.distributions.ParametricDistribution.loc">
+<code class="descname">loc</code><a class="headerlink" href="#viroconcom.distributions.ParametricDistribution.loc" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Param</em> – The location parameter.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="viroconcom.distributions.ParametricDistribution.scale">
+<code class="descname">scale</code><a class="headerlink" href="#viroconcom.distributions.ParametricDistribution.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Param</em> – The scale parameter.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="viroconcom.distributions.ParametricDistribution.name">
+<code class="descname">name</code><a class="headerlink" href="#viroconcom.distributions.ParametricDistribution.name" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – The name of the distribution. (“Weibull”, “LogNormal”, “Normal”)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="viroconcom.distributions.ParametricDistribution._scipy_cdf">
+<code class="descname">_scipy_cdf</code><a class="reference internal" href="../_modules/viroconcom/distributions.html#ParametricDistribution._scipy_cdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.ParametricDistribution._scipy_cdf" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>function</em> – The cumulative distribution function from scipy. (sts.weibull_min.cdf, …)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="viroconcom.distributions.ParametricDistribution._scipy_i_cdf">
+<code class="descname">_scipy_i_cdf</code><a class="reference internal" href="../_modules/viroconcom/distributions.html#ParametricDistribution._scipy_i_cdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.ParametricDistribution._scipy_i_cdf" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>function</em> – The inverse cumulative distribution (or percent-point) function.(sts.weibull_min.ppf, …)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="viroconcom.distributions.ParametricDistribution._default_shape">
+<code class="descname">_default_shape</code><a class="headerlink" href="#viroconcom.distributions.ParametricDistribution._default_shape" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – The default shape parameter.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="viroconcom.distributions.ParametricDistribution._default_loc">
+<code class="descname">_default_loc</code><a class="headerlink" href="#viroconcom.distributions.ParametricDistribution._default_loc" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – The default loc parameter.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="viroconcom.distributions.ParametricDistribution._default_scale">
+<code class="descname">_default_scale</code><a class="headerlink" href="#viroconcom.distributions.ParametricDistribution._default_scale" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> – The default scale parameter.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<dl class="last docutils">
+<dt>The following attributes/methods need to be initialised by child classes:</dt>
+<dd><ul class="first last simple">
+<li>name</li>
+<li>_scipy_cdf</li>
+<li>_scipy_i_cdf</li>
+</ul>
+</dd>
+</dl>
+</div>
+<dl class="method">
+<dt id="viroconcom.distributions.ParametricDistribution.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>shape</em>, <em>loc</em>, <em>scale</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/distributions.html#ParametricDistribution.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.ParametricDistribution.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>All parametric distributions can be initalized with ‘scale’, ‘shape’
+and ‘loc’ (location) parameters. Implemented distributions are:</p>
+<ul class="simple">
+<li>normal: <span class="math notranslate">\(f(x) = \frac{1}{x\widetilde{\sigma} \sqrt{2\pi}}\exp \left[ \frac{-(\ln x - \widetilde{\mu})^2}{2\widetilde{\sigma}^2}\right]\)</span></li>
+<li>Weibull: <span class="math notranslate">\(f(x) = \frac{\beta}{\alpha}\left( \frac{x-\gamma}{\alpha}\right)^{\beta -1} \exp \left[-\left( \frac{x-\gamma}{\alpha} \right)^{\beta} \right]\)</span></li>
+<li>log-normal: <span class="math notranslate">\(f(x) = \frac{1}{x\widetilde{\sigma} \sqrt{2\pi}}\exp \left[ \frac{-(\ln x - \widetilde{\mu})^2}{2\widetilde{\sigma}^2}\right]\)</span></li>
+</ul>
+<p>Their scale, shape, and loc values corerspond to the variables
+in the probability density function in the following manner:</p>
+<table border="1" class="last docutils">
+<colgroup>
+<col width="19%" />
+<col width="30%" />
+<col width="27%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">distribution</th>
+<th class="head">scale</th>
+<th class="head">shape</th>
+<th class="head">loc</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>normal</td>
+<td>σ</td>
+<td>–</td>
+<td>μ</td>
+</tr>
+<tr class="row-odd"><td>Weibull</td>
+<td>α</td>
+<td>β</td>
+<td>γ</td>
+</tr>
+<tr class="row-even"><td>log-normal</td>
+<td>e^μ</td>
+<td>σ</td>
+<td>–</td>
+</tr>
+</tbody>
+</table>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>shape</strong> (<a class="reference internal" href="params.html#viroconcom.params.Param" title="viroconcom.params.Param"><em>Param</em></a><em>,</em>) – The shape parameter.</li>
+<li><strong>loc</strong> (<a class="reference internal" href="params.html#viroconcom.params.Param" title="viroconcom.params.Param"><em>Param</em></a><em>,</em>) – The location parameter.</li>
+<li><strong>scale</strong> (<a class="reference internal" href="params.html#viroconcom.params.Param" title="viroconcom.params.Param"><em>Param</em></a><em>,</em>) – The scale parameter.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="viroconcom.distributions.ParametricDistribution.cdf">
+<code class="descname">cdf</code><span class="sig-paren">(</span><em>x</em>, <em>rv_values</em>, <em>dependencies</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/distributions.html#ParametricDistribution.cdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.ParametricDistribution.cdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the cumulative distribution function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>array_like</em>) – Points at which to calculate the cdf.</li>
+<li><strong>rv_values</strong> (<em>array_like</em>) – Values of all random variables in variable space in correct order.
+This can be a 1-dimensional array with length equal to the number of
+random variables N or a 2-dimensional array with shape (N, M).
+If x is an array, M must be len(x).</li>
+<li><strong>dependencies</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) – A 3-element tuple with one entry each for the shape, loc and scale parameters.
+The entry is the index of the random variable the parameter depends on.
+The index order has to be the same as in rv_values.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cdf</strong> – Cumulative distribution function evaluated at x under condition rv_values.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray,</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="viroconcom.distributions.ParametricDistribution.i_cdf">
+<code class="descname">i_cdf</code><span class="sig-paren">(</span><em>probabilities</em>, <em>rv_values</em>, <em>dependencies</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/distributions.html#ParametricDistribution.i_cdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.ParametricDistribution.i_cdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate percent-point function. (inverse cumulative distribution function)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>probabilities</strong> (<em>array_like</em>) – Probabilities for which to calculate the i_cdf.</li>
+<li><strong>rv_values</strong> (<em>array_like</em>) – Values of all random variables in variable space in correct order.
+This can be a 1-dimensional array with length equal to the number of
+random variables N or a 2-dimensional array with shape (N, M).
+If probabilities is an array, M must be len(probabilities).</li>
+<li><strong>dependencies</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) – A 3-element tuple with one entry each for the shape, loc and scale parameters.
+The entry is the index of the random variable the parameter depends on.
+The index order has to be the same as in rv_values.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>i_cdf</strong> – Inverse cumulative distribution function evaluated for probabilities
+under condition rv_values.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray,</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="viroconcom.distributions.ParametricDistribution.param_name_to_index">
+<em class="property">static </em><code class="descname">param_name_to_index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/distributions.html#ParametricDistribution.param_name_to_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.ParametricDistribution.param_name_to_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a parameter name (‘shape’, ‘loc’, ‘scale’) to the correct
+parameter index used in viroconcom (either 0, 1 or 2).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>param_name</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – The name of the parameter, must be ‘shape’, ‘loc’, or ‘scale’.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>param_index</strong> – The index corresponding to the name of the parameter as it is
+internally defined in viroconcom.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)">int</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="viroconcom.distributions.WeibullDistribution">
+<em class="property">class </em><code class="descclassname">viroconcom.distributions.</code><code class="descname">WeibullDistribution</code><span class="sig-paren">(</span><em>shape=None</em>, <em>loc=None</em>, <em>scale=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/distributions.html#WeibullDistribution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.WeibullDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#viroconcom.distributions.ParametricDistribution" title="viroconcom.distributions.ParametricDistribution"><code class="xref py py-class docutils literal notranslate"><span class="pre">viroconcom.distributions.ParametricDistribution</span></code></a></p>
+<p>A Weibull distribution.</p>
+<p class="rubric">Examples</p>
+<p>Create a WeibullDistribution and plot the cumulative distribution function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">viroconcom.params</span> <span class="k">import</span> <span class="n">ConstantParam</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">shape</span> <span class="o">=</span> <span class="n">ConstantParam</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loc</span> <span class="o">=</span> <span class="n">ConstantParam</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scale</span> <span class="o">=</span> <span class="n">ConstantParam</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dist</span> <span class="o">=</span> <span class="n">WeibullDistribution</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#file_example = plt.plot(x, dist.cdf(x, None, (None, None, None)),                                            #label=&quot;Weibull&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#legend = plt.legend()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="viroconcom.distributions.LognormalDistribution">
+<em class="property">class </em><code class="descclassname">viroconcom.distributions.</code><code class="descname">LognormalDistribution</code><span class="sig-paren">(</span><em>shape=None</em>, <em>loc=None</em>, <em>scale=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/distributions.html#LognormalDistribution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.LognormalDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#viroconcom.distributions.ParametricDistribution" title="viroconcom.distributions.ParametricDistribution"><code class="xref py py-class docutils literal notranslate"><span class="pre">viroconcom.distributions.ParametricDistribution</span></code></a></p>
+<p>A Lognormal distribution.</p>
+<p>There are two different ways to create the Lognormal distribution. You can either use the parameters <code class="docutils literal notranslate"><span class="pre">sigma</span></code> and
+<code class="docutils literal notranslate"><span class="pre">mu</span></code> as <em>kwargs</em> or the parameters <code class="docutils literal notranslate"><span class="pre">shape,</span> <span class="pre">None,</span> <span class="pre">scale</span></code> as <em>args</em>.</p>
+<p class="rubric">Examples</p>
+<p>Create a LognormalDistribution and plot the cumulative distribution function,
+using explicit <code class="docutils literal notranslate"><span class="pre">sigma</span></code> and <code class="docutils literal notranslate"><span class="pre">mu</span></code> arguments:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">viroconcom.params</span> <span class="k">import</span> <span class="n">ConstantParam</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_sigma</span> <span class="o">=</span> <span class="n">ConstantParam</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_mu</span> <span class="o">=</span> <span class="n">ConstantParam</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dist</span> <span class="o">=</span> <span class="n">LognormalDistribution</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="n">my_sigma</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">my_mu</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#example_plot = plt.plot(x, dist.cdf(x, None, (None, None, None)),                                            #label=&#39;Lognormal(mu, sigma)&#39;)</span>
+</pre></div>
+</div>
+<p>Creating the same LognormalDistribution using the <code class="docutils literal notranslate"><span class="pre">shape</span></code> and <code class="docutils literal notranslate"><span class="pre">scale</span></code> parameters:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">shape</span> <span class="o">=</span> <span class="n">ConstantParam</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scale</span> <span class="o">=</span> <span class="n">ConstantParam</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># scale = exp(mu) = exp(0) = 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dist</span> <span class="o">=</span> <span class="n">LognormalDistribution</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#example_plot = plt.plot(x, dist.cdf(x, None, (None, None, None)),                                            #label=&quot;Lognormal (shape, scale)&quot;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="viroconcom.distributions.NormalDistribution">
+<em class="property">class </em><code class="descclassname">viroconcom.distributions.</code><code class="descname">NormalDistribution</code><span class="sig-paren">(</span><em>shape=None</em>, <em>loc=None</em>, <em>scale=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/distributions.html#NormalDistribution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.NormalDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#viroconcom.distributions.ParametricDistribution" title="viroconcom.distributions.ParametricDistribution"><code class="xref py py-class docutils literal notranslate"><span class="pre">viroconcom.distributions.ParametricDistribution</span></code></a></p>
+<p>A Normal distribution.</p>
+<p>The location (loc) keyword specifies the mean. The scale (scale) keyword specifies the standard deviation.</p>
+<p class="rubric">Examples</p>
+<p>Create a NormalDistribution and plot the cumulative distribution function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">viroconcom.params</span> <span class="k">import</span> <span class="n">ConstantParam</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loc</span> <span class="o">=</span> <span class="n">ConstantParam</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scale</span> <span class="o">=</span> <span class="n">ConstantParam</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dist</span> <span class="o">=</span> <span class="n">NormalDistribution</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#example_plot = plt.plot(x, dist.cdf(x, None, (None, None, None)),                                #label=&quot;Normal&quot;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="viroconcom.distributions.KernelDensityDistribution">
+<em class="property">class </em><code class="descclassname">viroconcom.distributions.</code><code class="descname">KernelDensityDistribution</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/distributions.html#KernelDensityDistribution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.KernelDensityDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#viroconcom.distributions.Distribution" title="viroconcom.distributions.Distribution"><code class="xref py py-class docutils literal notranslate"><span class="pre">viroconcom.distributions.Distribution</span></code></a></p>
+<p>A kernel density distribution.</p>
+<p class="rubric">Examples</p>
+<p>Create a KernelDensityDistribution:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ------------ part from fitting.py --------------</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dens</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">nonparametric</span><span class="o">.</span><span class="n">KDEUnivariate</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dens</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">gridsize</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span> <span class="o">=</span> <span class="p">(</span><span class="n">dens</span><span class="o">.</span><span class="n">cdf</span><span class="p">,</span> <span class="n">dens</span><span class="o">.</span><span class="n">icdf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ------------------------------------------------</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dist</span> <span class="o">=</span> <span class="n">KernelDensityDistribution</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#example_plot = plt.plot(x, dist.cdf(x, None, (None, None, None)),                                #label=&#39;KernelDensity&#39;)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="viroconcom.distributions.KernelDensityDistribution.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/distributions.html#KernelDensityDistribution.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.KernelDensityDistribution.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a Kernel Density distribution by using two lists that contain coordinates which
+represent the cdf and icdf distribution. The Kernel Densitiy Distribution is created by the fitting process and
+can then be used to build a contour.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">There are no parameters such as shape, loc, scale used for the Kernel Density Distribution.
+Therefor it can not be dependent.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a><em>,</em>) – Contains cdf coordinates on index 0 and icdf coordinates on index 1
+params[0] -&gt; cdf
+params[1] -&gt; icdf</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="viroconcom.distributions.KernelDensityDistribution.cdf">
+<code class="descname">cdf</code><span class="sig-paren">(</span><em>x</em>, <em>rv_values</em>, <em>dependencies</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/distributions.html#KernelDensityDistribution.cdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.KernelDensityDistribution.cdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the cumulative distribution function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>array_like</em>) – Points at which to calculate the cdf.</li>
+<li><strong>rv_values</strong> (<em>array_like</em>) – Values of all random variables in variable space in correct order.
+This can be a 1-dimensional array with length equal to the number of
+random variables N or a 2-dimensional array with shape (N, M).
+If x is an array, M must be len(x).
+–Not used for Kernel Density–</li>
+<li><strong>dependencies</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) – A 3-element tuple with one entry each for the shape, loc and scale parameters.
+The entry is the index of the random variable the parameter depends on.
+The index order has to be the same as in rv_values.
+–Not used for Kernel Density–</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cdf</strong> – Cumulative distribution function evaluated at x.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="viroconcom.distributions.KernelDensityDistribution.i_cdf">
+<code class="descname">i_cdf</code><span class="sig-paren">(</span><em>probability</em>, <em>rv_values</em>, <em>dependencies</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/distributions.html#KernelDensityDistribution.i_cdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.KernelDensityDistribution.i_cdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate percent-point function. (inverse cumulative distribution function)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>probabilities</strong> (<em>array_like</em>) – Probabilities for which to calculate the i_cdf.</li>
+<li><strong>rv_values</strong> (<em>array_like</em>) – Values of all random variables in variable space in correct order.
+This can be a 1-dimensional array with length equal to the number of
+random variables N or a 2-dimensional array with shape (N, M).
+If probabilities is an array, M must be len(probabilities).
+–Not used for Kernel Density–</li>
+<li><strong>dependencies</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) – A 3-element tuple with one entry each for the shape, loc and scale parameters.
+The entry is the index of the random variable the parameter depends on.
+The index order has to be the same as in rv_values.
+–Not used for Kernel Density–</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>i_cdf</strong> – Inverse cumulative distribution function evaluated for probabilities.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray,</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="viroconcom.distributions.MultivariateDistribution">
+<em class="property">class </em><code class="descclassname">viroconcom.distributions.</code><code class="descname">MultivariateDistribution</code><span class="sig-paren">(</span><em>distributions=None</em>, <em>dependencies=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/distributions.html#MultivariateDistribution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.MultivariateDistribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A Multivariate distribution consisting of multiple univariate distributions and dependencies.</p>
+<dl class="attribute">
+<dt id="viroconcom.distributions.MultivariateDistribution.distributions">
+<code class="descname">distributions</code><a class="headerlink" href="#viroconcom.distributions.MultivariateDistribution.distributions" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of Distribution</em> – A list containing the distributions.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="viroconcom.distributions.MultivariateDistribution.dependencies">
+<code class="descname">dependencies</code><a class="headerlink" href="#viroconcom.distributions.MultivariateDistribution.dependencies" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of tuples</em> – A list containing a dependency tuple for each distribution.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="viroconcom.distributions.MultivariateDistribution.n_dim">
+<code class="descname">n_dim</code><a class="headerlink" href="#viroconcom.distributions.MultivariateDistribution.n_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – The number of distributions. Equal to len(distributions).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="viroconcom.distributions.MultivariateDistribution.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>distributions=None</em>, <em>dependencies=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/distributions.html#MultivariateDistribution.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.MultivariateDistribution.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>distributions</strong> (<em>list of Distribution</em>) – A list containing distributions.</li>
+<li><strong>dependencies</strong> (<em>list of tuples</em>) – A list with one dependency tuple for each distribution.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="viroconcom.distributions.MultivariateDistribution.add_distributions">
+<code class="descname">add_distributions</code><span class="sig-paren">(</span><em>distributions</em>, <em>dependencies</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/distributions.html#MultivariateDistribution.add_distributions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.MultivariateDistribution.add_distributions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add one or multiple distributions and define dependencies.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>distributions</strong> (<code class="docutils literal notranslate"><span class="pre">Distribution</span></code> or list of <code class="docutils literal notranslate"><span class="pre">Distribution</span></code>) – A distribution or list containing distributions.</li>
+<li><strong>dependencies</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a><em> or </em><em>list of tuples</em>) – A dependency tuple or list with one dependency tuple for each distribution.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="viroconcom.distributions.MultivariateDistribution.cell_averaged_joint_pdf">
+<code class="descname">cell_averaged_joint_pdf</code><span class="sig-paren">(</span><em>coords</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/distributions.html#MultivariateDistribution.cell_averaged_joint_pdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.MultivariateDistribution.cell_averaged_joint_pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the cell averaged joint probabilty density function.</p>
+<p>Multiplies the cell averaged probability densities of all distributions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>coords</strong> (<em>array_like</em>) – List of the sampling points of the random variables.
+The length of coords has to equal self.n_dim.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>fbar</strong> – Cell averaged joint probabilty density function evaluated at coords.
+It is a self.n_dim dimensional array,
+with shape (len(coords[0]), len(coords[1]), …)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="viroconcom.distributions.MultivariateDistribution.cell_averaged_pdf">
+<code class="descname">cell_averaged_pdf</code><span class="sig-paren">(</span><em>dist_index</em>, <em>coords</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/distributions.html#MultivariateDistribution.cell_averaged_pdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.MultivariateDistribution.cell_averaged_pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the cell averaged probabilty density function of a single distribution.</p>
+<p>Calculates the pdf by approximating it with the finite differential quotient
+of the cumulative distributions function, evaluated at the grid cells borders.
+i.e. <span class="math notranslate">\(f(x) \approx \frac{F(x+ 0.5\Delta x) - F(x- 0.5\Delta x) }{\Delta x}\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dist_index</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – The index of the distribution to calculate the pdf of,
+according to order of self.distributions.</li>
+<li><strong>coords</strong> (<em>array_like</em>) – List of the sampling points of the random variables.
+The pdf is calculated at coords[dist_index].
+The length of coords has to equal self.n_dim.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fbar</strong> – Cell averaged probabilty density function evaluated at coords[dist_index].
+It is a self.n_dim dimensional array.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="viroconcom.distributions.MultivariateDistribution.latex_repr">
+<code class="descname">latex_repr</code><span class="sig-paren">(</span><em>var_symbols=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/distributions.html#MultivariateDistribution.latex_repr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.distributions.MultivariateDistribution.latex_repr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the joint probabilty density function in latex format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>var_symbols</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a>) – <dl class="docutils">
+<dt>List of the random variable symbols, the first letter should be</dt>
+<dd>capitalized and further characters will be converged to subscripts,
+an example would be  [‘Hs’, ‘Tp’, ‘V’]</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>latex_string</strong> – The joint pdf in latex format (without $)
+E.g. f(h_s,t_p)=f_{H_s}(h_s)=</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+    <a id="sidebar-anchor"></a>
+    
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/distributions.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+      </ul>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, viroconcom.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.1.
+    </div>
+  </body>
+</html>

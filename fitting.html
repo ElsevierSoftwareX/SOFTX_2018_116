@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Fit your own data with fitting.py &#8212; viroconcom  documentation</title>
+    <link rel="stylesheet" href="_static/pydoctheme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Reference" href="reference.html" />
+    <link rel="prev" title="Calculate environmental contours" href="contours.html" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link rel="shortcut icon" type="image/png" href="_static/mini_logo.png" />
+    <meta name="viewport" content="width=device-width,initial-scale=0.8">
+    
+    
+
+  </head><body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="responsive-menu"><a href="#sidebar-anchor" title="Navigation">&#9776;</a></li>
+        <li><a href="index.html">viroconcom  documentation</a> &#187;</li>
+          <li><a href="user_guide.html" accesskey="U">User Guide</a> &#187;</li> 
+      </ul>
+    </div>
+    
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="fit-your-own-data-with-fitting-py">
+<h1>Fit your own data with fitting.py<a class="headerlink" href="#fit-your-own-data-with-fitting-py" title="Permalink to this headline">¶</a></h1>
+<p>This module implements the possibility to fit a probabilistc model to your own data.</p>
+<p>If you want to fit multivariate distribution to your data set you have to build an object of the class <code class="docutils literal notranslate"><span class="pre">Fit</span></code> in this module.
+The necessary parameters for building objects of <code class="docutils literal notranslate"><span class="pre">Fit</span></code> are also listed in the documentation of this class.
+Exemplary call:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">example_fit</span> <span class="o">=</span> <span class="n">Fit</span><span class="p">((</span><span class="n">data_1</span><span class="p">,</span> <span class="n">data_2</span><span class="p">),</span> <span class="p">(</span><span class="n">dist_description_0</span><span class="p">,</span> <span class="n">dist_description_1</span><span class="p">),</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It is important that the parameter <code class="docutils literal notranslate"><span class="pre">samples</span></code> is in the form (sample_0, sample_1, …).
+Each sample is a collection of data from type <em>list</em> and also all samples have the same length. The parameter <code class="docutils literal notranslate"><span class="pre">dist_descriptions</span></code>
+describes the structure of the probabilistic model that should be fitted to the sample. It should be from type <em>list</em> and should
+contain a dictionary for each dimension in the same sequence of the samples. It should accordingly have the same length as <code class="docutils literal notranslate"><span class="pre">samples</span></code>.</p>
+<p>Each <code class="docutils literal notranslate"><span class="pre">dist_description</span></code> describes one dimension of the probabilistic model structure. It contains the name of the current distribution (i.e. <code class="docutils literal notranslate"><span class="pre">&quot;Weibull&quot;</span></code>).
+Then it contains the dependency for this dimension from type <em>list</em>. In the sequence of <code class="docutils literal notranslate"><span class="pre">shape,</span> <span class="pre">loc,</span> <span class="pre">scale</span></code> it contains integers for the dependency
+of the current parameter or <em>None</em> if it has no dependency. It is important that the dependency is less than the index of the current dimension.
+The list for the parameter <code class="docutils literal notranslate"><span class="pre">functions</span></code> also has length of three and contains information about the used functions for fitting.</p>
+<p>The following distributions are available (keyword and meaning):</p>
+<ul class="simple">
+<li><strong>Weibull_2p</strong> :  2-parameter Weibull distribution</li>
+<li><strong>Weibull_3p</strong> :  3-parameter Weibull distribution</li>
+<li><strong>Lognormal</strong> :  lognormal distribution parametrized with exp(mu) and sigma</li>
+<li><strong>Lognormal_SigmaMu</strong> :  lognormal distribution parametrized with mu and sigma</li>
+<li><strong>Normal</strong> :  normal distribution</li>
+</ul>
+<p>The following dependence functions are available (keyword and meaning):</p>
+<ul class="simple">
+<li><strong>power3</strong> :  <span class="math notranslate">\(a + b * x^c\)</span></li>
+<li><strong>exp3</strong> : <span class="math notranslate">\(a + b * e^{x * c}\)</span></li>
+<li><strong>None</strong> : no dependency</li>
+</ul>
+<p>Example for <code class="docutils literal notranslate"><span class="pre">dist_description</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">example_dist_description</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lognormal&#39;</span><span class="p">,</span> <span class="s1">&#39;dependency&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                                        <span class="s1">&#39;functions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;power3&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;exp3&#39;</span><span class="p">)}</span>
+</pre></div>
+</div>
+<p>If the fit is finished it has the attribute <code class="docutils literal notranslate"><span class="pre">mul_var_dist</span></code> that is an object of <code class="docutils literal notranslate"><span class="pre">MultivariateDistribution</span></code> that contains all distributions you
+can use to build a contour for your data. Also it has the attribute <code class="docutils literal notranslate"><span class="pre">multiple_fit_inspection_data</span></code>, which can be used to visualize
+your fit.</p>
+<div class="section" id="comprehensive-example">
+<h2>Comprehensive example<a class="headerlink" href="#comprehensive-example" title="Permalink to this headline">¶</a></h2>
+<p>The following example can is based on the file <a class="reference external" href="https://github.com/virocon-organization/viroconcom/blob/master/examples/fit_distribution_similar_to_docs.py">fit_distribution_similar_to_docs</a> .</p>
+<p>First, let us create a data set, which represents sea states. The first variable
+is significant wave height, Hs, and the second variable spectral peak period,
+Tp</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">sts</span>
+
+<span class="kn">from</span> <span class="nn">viroconcom.fitting</span> <span class="k">import</span> <span class="n">Fit</span>
+<span class="kn">from</span> <span class="nn">viroconcom.contours</span> <span class="k">import</span> <span class="n">IFormContour</span>
+
+
+<span class="n">prng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># Draw 1000 samples from a Weibull distribution with shape=1.5 and scale=3,</span>
+<span class="c1"># which represents significant wave height.</span>
+<span class="n">sample_0</span> <span class="o">=</span> <span class="n">prng</span><span class="o">.</span><span class="n">weibull</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span><span class="o">*</span><span class="mi">3</span>
+
+<span class="c1"># Let the second sample, which represents spectral peak period increase</span>
+<span class="c1"># with significant wave height and follow a Lognormal distribution with</span>
+<span class="c1"># mean=2 and sigma=0.2</span>
+<span class="n">sample_1</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span> <span class="o">+</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">0.2</span> <span class="o">*</span> <span class="n">point</span><span class="p">)</span> <span class="o">+</span>
+            <span class="n">prng</span><span class="o">.</span><span class="n">lognormal</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span> <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">sample_0</span><span class="p">]</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">sample_0</span><span class="p">,</span> <span class="n">sample_1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;significant wave height [m]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;spectral peak period [s]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The code snipped will create this plot:</p>
+<div class="figure" id="id1">
+<a class="reference internal image-reference" href="_images/fitting_fig1.png"><img alt="example contours plot" src="_images/fitting_fig1.png" style="width: 640.0px; height: 480.0px;" /></a>
+<p class="caption"><span class="caption-text">Plot of a randomly drawn sample.</span></p>
+</div>
+<p>Now we describe the type of multivariate distribution that we want to fit to this data</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dist_description_0</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Weibull_3p&#39;</span><span class="p">,</span> <span class="s1">&#39;dependency&#39;</span><span class="p">:</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="s1">&#39;width_of_intervals&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+<span class="n">dist_description_1</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lognormal&#39;</span><span class="p">,</span> <span class="s1">&#39;dependency&#39;</span><span class="p">:</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="s1">&#39;functions&#39;</span><span class="p">:</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;exp3&#39;</span><span class="p">)}</span>
+</pre></div>
+</div>
+<p>Based on this description, we can compute the fit</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">my_fit</span> <span class="o">=</span> <span class="n">Fit</span><span class="p">((</span><span class="n">sample_0</span><span class="p">,</span> <span class="n">sample_1</span><span class="p">),</span> <span class="p">(</span><span class="n">dist_description_0</span><span class="p">,</span> <span class="n">dist_description_1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Now, let us plot the fit for the first variable</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># For panel A: use a histogram.</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">))</span>
+<span class="n">ax_1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">param_grid</span> <span class="o">=</span> <span class="n">my_fit</span><span class="o">.</span><span class="n">multiple_fit_inspection_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scale_at</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">my_fit</span><span class="o">.</span><span class="n">multiple_fit_inspection_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scale_samples</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">density</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+         <span class="n">label</span><span class="o">=</span><span class="s1">&#39;sample&#39;</span><span class="p">)</span>
+<span class="n">shape</span> <span class="o">=</span> <span class="n">my_fit</span><span class="o">.</span><span class="n">mul_var_dist</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">scale</span> <span class="o">=</span> <span class="n">my_fit</span><span class="o">.</span><span class="n">mul_var_dist</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
+         <span class="n">sts</span><span class="o">.</span><span class="n">weibull_min</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">c</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                             <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">),</span>
+         <span class="n">label</span><span class="o">=</span><span class="s1">&#39;fitted Weibull distribution&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;significant wave height [m]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;probability density [-]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="c1"># For panel B: use a Q-Q plot.</span>
+<span class="n">ax_2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">sts</span><span class="o">.</span><span class="n">probplot</span><span class="p">(</span><span class="n">my_fit</span><span class="o">.</span><span class="n">multiple_fit_inspection_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scale_samples</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+             <span class="n">sparams</span><span class="o">=</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="p">),</span> <span class="n">dist</span><span class="o">=</span><span class="n">sts</span><span class="o">.</span><span class="n">weibull_min</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="n">plt</span><span class="p">)</span>
+<span class="n">ax_2</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_markerfacecolor</span><span class="p">(</span><span class="s1">&#39;#1f77ba&#39;</span><span class="p">)</span> <span class="c1"># Adapt to v2.0 colors</span>
+<span class="n">ax_2</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_markeredgecolor</span><span class="p">(</span><span class="s1">&#39;#1f77ba&#39;</span><span class="p">)</span> <span class="c1"># Adapt to v2.0 colors</span>
+<span class="n">ax_2</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="s1">&#39;#ff7f02&#39;</span><span class="p">)</span> <span class="c1"># Adapt to v2.0 colors</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;theoretical quantiles [m]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;data quantiles [m]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="figure" id="id2">
+<a class="reference internal image-reference" href="_images/fitting_fig2.png"><img alt="fit of first variable" src="_images/fitting_fig2.png" style="width: 900.0px; height: 450.0px;" /></a>
+<p class="caption"><span class="caption-text">Fit of the first variable, Hs.</span></p>
+</div>
+<p>For our second variable, we need some more plots to inspect it properly.
+Let us start with the individual distributions, one for each Hs-interval</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">ax_1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">221</span><span class="p">)</span>
+<span class="n">title1</span> <span class="o">=</span> <span class="n">ax_1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Tp-Distribution for 0≤Hs&lt;2&#39;</span><span class="p">)</span>
+<span class="n">param_grid</span> <span class="o">=</span> <span class="n">my_fit</span><span class="o">.</span><span class="n">multiple_fit_inspection_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scale_at</span>
+<span class="n">ax1_hist</span> <span class="o">=</span> <span class="n">ax_1</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">my_fit</span><span class="o">.</span><span class="n">multiple_fit_inspection_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scale_samples</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">density</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">shape</span> <span class="o">=</span> <span class="n">my_fit</span><span class="o">.</span><span class="n">mul_var_dist</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">scale</span> <span class="o">=</span> <span class="n">my_fit</span><span class="o">.</span><span class="n">mul_var_dist</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">param_grid</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">ax1_plot</span> <span class="o">=</span> <span class="n">ax_1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">sts</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">))</span>
+
+<span class="n">ax_2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">222</span><span class="p">)</span>
+<span class="n">title2</span> <span class="o">=</span> <span class="n">ax_2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Tp-Distribution for 2≤Hs&lt;4&#39;</span><span class="p">)</span>
+<span class="n">ax2_hist</span> <span class="o">=</span> <span class="n">ax_2</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">my_fit</span><span class="o">.</span><span class="n">multiple_fit_inspection_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scale_samples</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">density</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">shape</span> <span class="o">=</span> <span class="n">my_fit</span><span class="o">.</span><span class="n">mul_var_dist</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">scale</span> <span class="o">=</span> <span class="n">my_fit</span><span class="o">.</span><span class="n">mul_var_dist</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">param_grid</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">ax2_plot</span> <span class="o">=</span> <span class="n">ax_2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">sts</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">))</span>
+
+<span class="n">ax_3</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">223</span><span class="p">)</span>
+<span class="n">title3</span> <span class="o">=</span> <span class="n">ax_3</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Tp-Distribution for 4≤Hs&lt;6&#39;</span><span class="p">)</span>
+<span class="n">ax3_hist</span> <span class="o">=</span> <span class="n">ax_3</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">my_fit</span><span class="o">.</span><span class="n">multiple_fit_inspection_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scale_samples</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">density</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">shape</span> <span class="o">=</span> <span class="n">my_fit</span><span class="o">.</span><span class="n">mul_var_dist</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">scale</span> <span class="o">=</span> <span class="n">my_fit</span><span class="o">.</span><span class="n">mul_var_dist</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">param_grid</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">ax3_plot</span> <span class="o">=</span> <span class="n">ax_3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">sts</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">))</span>
+<span class="n">ax_3</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;spectral peak period [s]&#39;</span><span class="p">)</span>
+
+<span class="n">ax_4</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">224</span><span class="p">)</span>
+<span class="n">title4</span> <span class="o">=</span> <span class="n">ax_4</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Tp-Distribution for 6≤Hs&lt;8&#39;</span><span class="p">)</span>
+<span class="n">ax4_hist</span> <span class="o">=</span> <span class="n">ax_4</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">my_fit</span><span class="o">.</span><span class="n">multiple_fit_inspection_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scale_samples</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">density</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">shape</span> <span class="o">=</span> <span class="n">my_fit</span><span class="o">.</span><span class="n">mul_var_dist</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">scale</span> <span class="o">=</span> <span class="n">my_fit</span><span class="o">.</span><span class="n">mul_var_dist</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">param_grid</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">ax4_plot</span> <span class="o">=</span> <span class="n">ax_4</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">sts</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">s</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">))</span>
+<span class="n">ax_4</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;spectral peak period [s]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">x_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">param_grid</span><span class="p">,</span> <span class="n">my_fit</span><span class="o">.</span><span class="n">multiple_fit_inspection_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scale_value</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span>
+         <span class="n">label</span><span class="o">=</span><span class="s1">&#39;discrete scale values&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_1</span><span class="p">,</span> <span class="n">my_fit</span><span class="o">.</span><span class="n">mul_var_dist</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">x_1</span><span class="p">),</span>
+         <span class="n">label</span><span class="o">=</span><span class="s1">&#39;fitted dependence function&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;significant wave height [m]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;scale parameter (Tp-distribution)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="figure" id="id3">
+<a class="reference internal image-reference" href="_images/fitting_fig3.png"><img alt="individual fits of second variable" src="_images/fitting_fig3.png" style="width: 1000.0px; height: 800.0px;" /></a>
+<p class="caption"><span class="caption-text">Individual fits of second variable, Tp.</span></p>
+</div>
+<p>Let us now inspect how well our dependence function fits to these four scale
+values, which we got from the individual distributions</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">x_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">param_grid</span><span class="p">,</span> <span class="n">my_fit</span><span class="o">.</span><span class="n">multiple_fit_inspection_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scale_value</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span>
+         <span class="n">label</span><span class="o">=</span><span class="s1">&#39;discrete scale values&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_1</span><span class="p">,</span> <span class="n">my_fit</span><span class="o">.</span><span class="n">mul_var_dist</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">x_1</span><span class="p">),</span>
+         <span class="n">label</span><span class="o">=</span><span class="s1">&#39;fitted dependence function&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;significant wave height [m]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;scale parameter (Tp-distribution) [-]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="figure" id="id4">
+<a class="reference internal image-reference" href="_images/fitting_fig4.png"><img alt="fit of the dependence function" src="_images/fitting_fig4.png" style="width: 640.0px; height: 480.0px;" /></a>
+<p class="caption"><span class="caption-text">Fit of the dependence function.</span></p>
+</div>
+<p>Finally, let us use the multivariate distribution we fitted to
+compute an environmental contour</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">iform_contour</span> <span class="o">=</span> <span class="n">IFormContour</span><span class="p">(</span><span class="n">my_fit</span><span class="o">.</span><span class="n">mul_var_dist</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">sample_0</span><span class="p">,</span> <span class="n">sample_1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;sample&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">iform_contour</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">iform_contour</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+            <span class="s1">&#39;-k&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;IFORM contour&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;significant wave height [m]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;spectral peak period [s]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="figure" id="id5">
+<a class="reference internal image-reference" href="_images/fitting_fig5.png"><img alt="environmental contour based on the fitted distribution" src="_images/fitting_fig5.png" style="width: 640.0px; height: 480.0px;" /></a>
+<p class="caption"><span class="caption-text">Environmental contour based on the fitted distribution.</span></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+    <a id="sidebar-anchor"></a>
+    
+
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Fit your own data with fitting.py</a><ul>
+<li><a class="reference internal" href="#comprehensive-example">Comprehensive example</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="contours.html"
+                        title="previous chapter">Calculate environmental contours</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="reference.html"
+                        title="next chapter">Reference</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/fitting.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="reference.html" title="Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="contours.html" title="Calculate environmental contours"
+             accesskey="P">previous</a> |</li>
+      </ul>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, viroconcom.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.1.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>viroconcom.contours module &#8212; viroconcom  documentation</title>
+    <link rel="stylesheet" href="../_static/pydoctheme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link rel="shortcut icon" type="image/png" href="../_static/mini_logo.png" />
+    <meta name="viewport" content="width=device-width,initial-scale=0.8">
+    
+    
+
+  </head><body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="responsive-menu"><a href="#sidebar-anchor" title="Navigation">&#9776;</a></li>
+        <li><a href="../index.html">viroconcom  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-viroconcom.contours">
+<span id="viroconcom-contours-module"></span><h1>viroconcom.contours module<a class="headerlink" href="#module-viroconcom.contours" title="Permalink to this headline">¶</a></h1>
+<p>Create Contours.</p>
+<dl class="class">
+<dt id="viroconcom.contours.Contour">
+<em class="property">class </em><code class="descclassname">viroconcom.contours.</code><code class="descname">Contour</code><span class="sig-paren">(</span><em>mul_var_distribution</em>, <em>return_period=25</em>, <em>state_duration=3</em>, <em>timeout=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/contours.html#Contour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.contours.Contour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/abc.html#abc.ABC" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<p>Abstract base class for contours.</p>
+<dl class="attribute">
+<dt id="viroconcom.contours.Contour.distribution">
+<code class="descname">distribution</code><a class="headerlink" href="#viroconcom.contours.Contour.distribution" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>MultivariateDistribution</em> – The distribution to calculate the contour of.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="viroconcom.contours.Contour.coordinates">
+<code class="descname">coordinates</code><a class="headerlink" href="#viroconcom.contours.Contour.coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of lists of ndarrays</em> – Contains the coordinates of points on the contour.
+If the distribution is unimodal the outer list contains only one element,
+else the outer list divides possible multiple contour parts.
+The inner list contains multiple numpy arrays of the same length, one per dimension.
+The values of the arrays are the coordinates in the corresponding dimension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="viroconcom.contours.Contour.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>mul_var_distribution</em>, <em>return_period=25</em>, <em>state_duration=3</em>, <em>timeout=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/contours.html#Contour.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.contours.Contour.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mul_var_distribution</strong> (<a class="reference internal" href="distributions.html#viroconcom.distributions.MultivariateDistribution" title="viroconcom.distributions.MultivariateDistribution"><em>MultivariateDistribution</em></a>) – The distribution to be used to calculate the contour.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#TimeoutError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">TimeoutError</span></code></a> – If the calculation takes too long and the given value for timeout is exceeded.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="viroconcom.contours.IFormContour">
+<em class="property">class </em><code class="descclassname">viroconcom.contours.</code><code class="descname">IFormContour</code><span class="sig-paren">(</span><em>mul_var_distribution</em>, <em>return_period=25</em>, <em>state_duration=3</em>, <em>n_points=20</em>, <em>timeout=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/contours.html#IFormContour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.contours.IFormContour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#viroconcom.contours.Contour" title="viroconcom.contours.Contour"><code class="xref py py-class docutils literal notranslate"><span class="pre">viroconcom.contours.Contour</span></code></a></p>
+<dl class="method">
+<dt id="viroconcom.contours.IFormContour.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>mul_var_distribution</em>, <em>return_period=25</em>, <em>state_duration=3</em>, <em>n_points=20</em>, <em>timeout=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/contours.html#IFormContour.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.contours.IFormContour.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contour based on the inverse first-order reliability method.</p>
+<p>This method was proposed by Winterstein et al. (1993).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mul_var_distribution</strong> (<a class="reference internal" href="distributions.html#viroconcom.distributions.MultivariateDistribution" title="viroconcom.distributions.MultivariateDistribution"><em>MultivariateDistribution</em></a>) – The distribution to be used to calculate the contour.</li>
+<li><strong>return_period</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The years to consider for calculation. Defaults to 25.</li>
+<li><strong>state_duration</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Time period for which an environmental state is measured,
+expressed in hours. Defaults to 3.</li>
+<li><strong>n_points</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of points on the contour. Defaults to 20.</li>
+<li><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – The maximum time in seconds there the contour has to be computed.
+This parameter also controls multiprocessing. If timeout is None
+serial processing is performed, if it is not None multiprocessing
+is used. Defaults to None.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal notranslate"><span class="pre">TimeoutError,</span></code> – If the calculation takes too long and the given value for timeout is exceeded.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">viroconcom.distributions</span> <span class="k">import</span> <span class="p">(</span><span class="n">WeibullDistribution</span><span class="p">,</span>                                               <span class="n">LognormalDistribution</span><span class="p">,</span>                                               <span class="n">MultivariateDistribution</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">viroconcom.params</span> <span class="k">import</span> <span class="n">ConstantParam</span><span class="p">,</span> <span class="n">FunctionParam</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#Define dependency tuple</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dep1</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dep2</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#Define parameters</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">shape</span> <span class="o">=</span> <span class="n">ConstantParam</span><span class="p">(</span><span class="mf">1.471</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loc</span> <span class="o">=</span> <span class="n">ConstantParam</span><span class="p">(</span><span class="mf">0.8888</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scale</span> <span class="o">=</span> <span class="n">ConstantParam</span><span class="p">(</span><span class="mf">2.776</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">par1</span> <span class="o">=</span> <span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span> <span class="o">=</span> <span class="n">FunctionParam</span><span class="p">(</span><span class="mf">0.1000</span><span class="p">,</span> <span class="mf">1.489</span><span class="p">,</span> <span class="mf">0.1901</span><span class="p">,</span> <span class="s2">&quot;power3&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sigma</span> <span class="o">=</span> <span class="n">FunctionParam</span><span class="p">(</span><span class="mf">0.0400</span><span class="p">,</span> <span class="mf">0.1748</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2243</span><span class="p">,</span> <span class="s2">&quot;exp3&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#Create distributions</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dist1</span> <span class="o">=</span> <span class="n">WeibullDistribution</span><span class="p">(</span><span class="o">*</span><span class="n">par1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dist2</span> <span class="o">=</span> <span class="n">LognormalDistribution</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">distributions</span> <span class="o">=</span> <span class="p">[</span><span class="n">dist1</span><span class="p">,</span> <span class="n">dist2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span><span class="n">dep1</span><span class="p">,</span> <span class="n">dep2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mul_dist</span> <span class="o">=</span> <span class="n">MultivariateDistribution</span><span class="p">(</span><span class="n">distributions</span><span class="p">,</span> <span class="n">dependencies</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_contour_iform</span> <span class="o">=</span> <span class="n">IFormContour</span><span class="p">(</span><span class="n">mul_dist</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="viroconcom.contours.HighestDensityContour">
+<em class="property">class </em><code class="descclassname">viroconcom.contours.</code><code class="descname">HighestDensityContour</code><span class="sig-paren">(</span><em>mul_var_distribution</em>, <em>return_period=25</em>, <em>state_duration=3</em>, <em>limits=None</em>, <em>deltas=None</em>, <em>timeout=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/contours.html#HighestDensityContour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.contours.HighestDensityContour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#viroconcom.contours.Contour" title="viroconcom.contours.Contour"><code class="xref py py-class docutils literal notranslate"><span class="pre">viroconcom.contours.Contour</span></code></a></p>
+<dl class="method">
+<dt id="viroconcom.contours.HighestDensityContour.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>mul_var_distribution</em>, <em>return_period=25</em>, <em>state_duration=3</em>, <em>limits=None</em>, <em>deltas=None</em>, <em>timeout=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/contours.html#HighestDensityContour.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.contours.HighestDensityContour.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contour based on highest density contour method.</p>
+<p>This method was proposed by Haselsteiner et al. (2017). The paper’s
+DOI is 10.1016/j.coastaleng.2017.03.002 .</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mul_var_distribution</strong> (<a class="reference internal" href="distributions.html#viroconcom.distributions.MultivariateDistribution" title="viroconcom.distributions.MultivariateDistribution"><em>MultivariateDistribution</em></a>) – The distribution to be used to calculate the contour.</li>
+<li><strong>return_period</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The years to consider for calculation. Defaults to 25.</li>
+<li><strong>state_duration</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Time period for which a (environmental) state is measured, expressed in hours.
+Defaults to 3.</li>
+<li><strong>limits</strong> (<em>list of tuples</em><em>, </em><em>optional</em>) – One 2-Element tuple per dimension in mul_var_distribution,
+containing min and max limits for calculation. ((min, max)).
+Smaller value is always assumed minimum. Defaults to list of (0, 10)</li>
+<li><strong>deltas</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em> or </em><em>list of float</em><em>, </em><em>optional</em>) – The grid stepsize used for calculation.
+If a single float is supplied it is used for all dimensions.
+If a list of float is supplied it has to be of the same length
+as there are dimensions in mul_var_dist.
+Defaults to 0.5.</li>
+<li><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – The maximum time in seconds there the contour has to be computed.
+This parameter also controls multiprocessing. If timeout is None
+serial processing is performed, if it is not None multiprocessing
+is used. Defaults to None.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal notranslate"><span class="pre">TimeoutError,</span></code> – If the calculation takes too long and the given value for timeout is exceeded.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">example</p>
+<p>Creating contour example for 2-d HDC with Weibull and Lognormal
+distribution</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">viroconcom.distributions</span> <span class="k">import</span> <span class="p">(</span><span class="n">WeibullDistribution</span><span class="p">,</span>                                               <span class="n">LognormalDistribution</span><span class="p">,</span>                                               <span class="n">MultivariateDistribution</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">viroconcom.params</span> <span class="k">import</span> <span class="n">ConstantParam</span><span class="p">,</span> <span class="n">FunctionParam</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#Define dependency tuple</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dep1</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dep2</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#Define parameters</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">shape</span> <span class="o">=</span> <span class="n">ConstantParam</span><span class="p">(</span><span class="mf">1.471</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loc</span> <span class="o">=</span> <span class="n">ConstantParam</span><span class="p">(</span><span class="mf">0.8888</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scale</span> <span class="o">=</span> <span class="n">ConstantParam</span><span class="p">(</span><span class="mf">2.776</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">par1</span> <span class="o">=</span> <span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span> <span class="o">=</span> <span class="n">FunctionParam</span><span class="p">(</span><span class="mf">0.1000</span><span class="p">,</span> <span class="mf">1.489</span><span class="p">,</span> <span class="mf">0.1901</span><span class="p">,</span> <span class="s1">&#39;power3&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sigma</span> <span class="o">=</span> <span class="n">FunctionParam</span><span class="p">(</span><span class="mf">0.0400</span><span class="p">,</span> <span class="mf">0.1748</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2243</span><span class="p">,</span> <span class="s1">&#39;exp3&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#Create distributions</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dist1</span> <span class="o">=</span> <span class="n">WeibullDistribution</span><span class="p">(</span><span class="o">*</span><span class="n">par1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dist2</span> <span class="o">=</span> <span class="n">LognormalDistribution</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">distributions</span> <span class="o">=</span> <span class="p">[</span><span class="n">dist1</span><span class="p">,</span> <span class="n">dist2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span><span class="n">dep1</span><span class="p">,</span> <span class="n">dep2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mul_dist</span> <span class="o">=</span> <span class="n">MultivariateDistribution</span><span class="p">(</span><span class="n">distributions</span><span class="p">,</span> <span class="n">dependencies</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#Calculate contour</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n_years</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">limits</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">18</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">deltas</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test_contour_HDC</span> <span class="o">=</span> <span class="n">HighestDensityContour</span><span class="p">(</span><span class="n">mul_dist</span><span class="p">,</span> <span class="n">n_years</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span>                                                     <span class="n">limits</span><span class="p">,</span> <span class="n">deltas</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="viroconcom.contours.HighestDensityContour.cumsum_biggest_until">
+<code class="descname">cumsum_biggest_until</code><span class="sig-paren">(</span><em>array</em>, <em>limit</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/viroconcom/contours.html#HighestDensityContour.cumsum_biggest_until"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#viroconcom.contours.HighestDensityContour.cumsum_biggest_until" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find biggest elements to sum to reach limit.</p>
+<p>Sorts array, and calculates the cumulative sum.
+Returns a boolean array with the same shape as array indicating the
+fields summed to reach limit, as well as the last value added.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>array</strong> (<em>ndarray</em>) – Array of arbitrary shape with all values &gt;= 0.</li>
+<li><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – limit to sum up to.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><ul class="simple">
+<li><strong>summed_fields</strong> (<em>ndarray, dtype=Bool</em>) – Boolean array of shape like array with True if element was used in summation.</li>
+<li><strong>last_summed</strong> (<em>float</em>) – Element that was added last to the sum.</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If <cite>array</cite> contains nan.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">RuntimeWarning</span></code> is raised if the limit cannot be reached by summing all values.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+    <a id="sidebar-anchor"></a>
+    
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/contours.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+      </ul>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, viroconcom.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.1.
+    </div>
+  </body>
+</html>

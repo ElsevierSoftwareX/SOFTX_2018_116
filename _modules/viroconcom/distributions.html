@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>viroconcom.distributions &#8212; viroconcom  documentation</title>
+    <link rel="stylesheet" href="../../_static/pydoctheme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link rel="shortcut icon" type="image/png" href="../../_static/mini_logo.png" />
+    <meta name="viewport" content="width=device-width,initial-scale=0.8">
+    
+    
+
+  </head><body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="responsive-menu"><a href="#sidebar-anchor" title="Navigation">&#9776;</a></li>
+        <li><a href="../../index.html">viroconcom  documentation</a> &#187;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for viroconcom.distributions</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Uni- and multivariate distributions.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">sts</span>
+
+<span class="kn">from</span> <span class="nn">.settings</span> <span class="k">import</span> <span class="n">SHAPE_STRING</span><span class="p">,</span> <span class="n">LOCATION_STRING</span><span class="p">,</span> <span class="n">SCALE_STRING</span>
+<span class="kn">from</span> <span class="nn">.params</span> <span class="k">import</span> <span class="n">FunctionParam</span><span class="p">,</span> <span class="n">ConstantParam</span><span class="p">,</span> <span class="n">Wrapper</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Distribution&quot;</span><span class="p">,</span> <span class="s2">&quot;ParametricDistribution&quot;</span><span class="p">,</span> <span class="s2">&quot;WeibullDistribution&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;LognormalDistribution&quot;</span><span class="p">,</span> <span class="s2">&quot;NormalDistribution&quot;</span><span class="p">,</span> <span class="s2">&quot;KernelDensityDistribution&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;MultivariateDistribution&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="Distribution"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.Distribution">[docs]</a><span class="k">class</span> <span class="nc">Distribution</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for distributions.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Distribution.cdf"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.Distribution.cdf">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">rv_values</span><span class="p">,</span> <span class="n">dependency</span><span class="p">):</span></div>
+        <span class="sd">&quot;&quot;&quot;Calculate the cumulative distribution function.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Distribution.i_cdf"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.Distribution.i_cdf">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">i_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">rv_values</span><span class="p">,</span> <span class="n">dependency</span><span class="p">):</span></div></div>
+        <span class="sd">&quot;&quot;&quot;Calculate percent-point function. (inverse cumulative distribution function)&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="ParametricDistribution"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.ParametricDistribution">[docs]</a><span class="k">class</span> <span class="nc">ParametricDistribution</span><span class="p">(</span><span class="n">Distribution</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for parametric distributions.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    shape : Param</span>
+<span class="sd">        The shape parameter.</span>
+<span class="sd">    loc : Param</span>
+<span class="sd">        The location parameter.</span>
+<span class="sd">    scale : Param</span>
+<span class="sd">        The scale parameter.</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The name of the distribution. (&quot;Weibull&quot;, &quot;LogNormal&quot;, &quot;Normal&quot;)</span>
+<span class="sd">    _scipy_cdf : function</span>
+<span class="sd">        The cumulative distribution function from scipy. (sts.weibull_min.cdf, ...)</span>
+<span class="sd">    _scipy_i_cdf : function</span>
+<span class="sd">        The inverse cumulative distribution (or percent-point) function.(sts.weibull_min.ppf, ...)</span>
+<span class="sd">    _default_shape : float</span>
+<span class="sd">        The default shape parameter.</span>
+<span class="sd">    _default_loc : float</span>
+<span class="sd">        The default loc parameter.</span>
+<span class="sd">    _default_scale : float</span>
+<span class="sd">        The default scale parameter.</span>
+
+
+<span class="sd">    Note</span>
+<span class="sd">    -----</span>
+<span class="sd">    The following attributes/methods need to be initialised by child classes:</span>
+<span class="sd">        - name</span>
+<span class="sd">        - _scipy_cdf</span>
+<span class="sd">        - _scipy_i_cdf</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ParametricDistribution.__init__"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.ParametricDistribution.__init__">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Note</span>
+<span class="sd">        ----</span>
+<span class="sd">        All parametric distributions can be initalized with &#39;scale&#39;, &#39;shape&#39;</span>
+<span class="sd">        and &#39;loc&#39; (location) parameters. Implemented distributions are:</span>
+
+<span class="sd">        * normal: :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`</span>
+
+<span class="sd">        * Weibull: :math:`f(x) = \\frac{\\beta}{\\alpha}\\left( \\frac{x-\\gamma}{\\alpha}\\right)^{\\beta -1} \\exp \\left[-\\left( \\frac{x-\\gamma}{\\alpha} \\right)^{\\beta} \\right]`</span>
+
+<span class="sd">        * log-normal: :math:`f(x) = \\frac{1}{x\\widetilde{\\sigma} \\sqrt{2\\pi}}\\exp \\left[ \\frac{-(\\ln x - \\widetilde{\\mu})^2}{2\\widetilde{\\sigma}^2}\\right]`</span>
+
+<span class="sd">        Their scale, shape, and loc values corerspond to the variables</span>
+<span class="sd">        in the probability density function in the following manner:</span>
+
+<span class="sd">        ============  ===================  =================  ================</span>
+<span class="sd">        distribution  scale                shape              loc</span>
+<span class="sd">        ============  ===================  =================  ================</span>
+<span class="sd">        normal        σ                    --                 μ</span>
+<span class="sd">        Weibull       α                    β                  γ</span>
+<span class="sd">        log-normal    e^μ                  σ                  --</span>
+<span class="sd">        ============  ===================  =================  ================</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        shape : Param,</span>
+<span class="sd">            The shape parameter.</span>
+<span class="sd">        loc : Param,</span>
+<span class="sd">            The location parameter.</span>
+<span class="sd">        scale : Param,</span>
+<span class="sd">            The scale parameter.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loc</span> <span class="o">=</span> <span class="n">loc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span>
+        <span class="c1"># The following attributes need to be overwritten by subclasses</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Parametric&quot;</span>  <span class="c1"># e.g. &quot;Weibull&quot;, &quot;Lognormal&quot;,  ...</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_shape</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_loc</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_scale</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_valid_shape</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span> <span class="p">:</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="s2">&quot;strict_greater&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                             <span class="s2">&quot;max&quot;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="s2">&quot;strict_less&quot;</span> <span class="p">:</span> <span class="kc">True</span> <span class="p">}</span> <span class="c1"># -inf &lt; shape &lt; inf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_valid_loc</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span> <span class="p">:</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="s2">&quot;strict_greater&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                           <span class="s2">&quot;max&quot;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="s2">&quot;strict_less&quot;</span> <span class="p">:</span> <span class="kc">True</span> <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_valid_scale</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span> <span class="p">:</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="s2">&quot;strict_greater&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span></div>
+                             <span class="s2">&quot;max&quot;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="s2">&quot;strict_less&quot;</span> <span class="p">:</span> <span class="kc">True</span> <span class="p">}</span>
+
+
+<div class="viewcode-block" id="ParametricDistribution._scipy_cdf"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.ParametricDistribution._scipy_cdf">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_scipy_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span></div>
+        <span class="sd">&quot;&quot;&quot;Overwrite with appropriate cdf function from scipy package. &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ParametricDistribution._scipy_i_cdf"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.ParametricDistribution._scipy_i_cdf">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_scipy_i_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span></div>
+        <span class="sd">&quot;&quot;&quot;Overwrite with appropriate i_cdf function from scipy package. &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ParametricDistribution.cdf"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.ParametricDistribution.cdf">[docs]</a>    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">rv_values</span><span class="p">,</span> <span class="n">dependencies</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the cumulative distribution function.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : array_like</span>
+<span class="sd">            Points at which to calculate the cdf.</span>
+<span class="sd">        rv_values : array_like</span>
+<span class="sd">            Values of all random variables in variable space in correct order.</span>
+<span class="sd">            This can be a 1-dimensional array with length equal to the number of</span>
+<span class="sd">            random variables N or a 2-dimensional array with shape (N, M).</span>
+<span class="sd">            If x is an array, M must be len(x).</span>
+<span class="sd">        dependencies : tuple</span>
+<span class="sd">            A 3-element tuple with one entry each for the shape, loc and scale parameters.</span>
+<span class="sd">            The entry is the index of the random variable the parameter depends on.</span>
+<span class="sd">            The index order has to be the same as in rv_values.</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        cdf : ndarray,</span>
+<span class="sd">            Cumulative distribution function evaluated at x under condition rv_values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">shape_val</span><span class="p">,</span> <span class="n">loc_val</span><span class="p">,</span> <span class="n">scale_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_parameter_values</span><span class="p">(</span><span class="n">rv_values</span><span class="p">,</span> <span class="n">dependencies</span><span class="p">)</span>
+</div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scipy_cdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">shape_val</span><span class="p">,</span> <span class="n">loc_val</span><span class="p">,</span> <span class="n">scale_val</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ParametricDistribution.i_cdf"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.ParametricDistribution.i_cdf">[docs]</a>    <span class="k">def</span> <span class="nf">i_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">rv_values</span><span class="p">,</span> <span class="n">dependencies</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate percent-point function. (inverse cumulative distribution function)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        probabilities : array_like</span>
+<span class="sd">            Probabilities for which to calculate the i_cdf.</span>
+<span class="sd">        rv_values : array_like</span>
+<span class="sd">            Values of all random variables in variable space in correct order.</span>
+<span class="sd">            This can be a 1-dimensional array with length equal to the number of</span>
+<span class="sd">            random variables N or a 2-dimensional array with shape (N, M).</span>
+<span class="sd">            If probabilities is an array, M must be len(probabilities).</span>
+<span class="sd">        dependencies : tuple</span>
+<span class="sd">            A 3-element tuple with one entry each for the shape, loc and scale parameters.</span>
+<span class="sd">            The entry is the index of the random variable the parameter depends on.</span>
+<span class="sd">            The index order has to be the same as in rv_values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        i_cdf : ndarray,</span>
+<span class="sd">            Inverse cumulative distribution function evaluated for probabilities</span>
+<span class="sd">            under condition rv_values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">shape_val</span><span class="p">,</span> <span class="n">loc_val</span><span class="p">,</span> <span class="n">scale_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_parameter_values</span><span class="p">(</span><span class="n">rv_values</span><span class="p">,</span> <span class="n">dependencies</span><span class="p">)</span>
+</div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scipy_i_cdf</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">shape_val</span><span class="p">,</span> <span class="n">loc_val</span><span class="p">,</span> <span class="n">scale_val</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_parameter_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rv_values</span><span class="p">,</span> <span class="n">dependencies</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluates the conditional shape, loc, scale parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rv_values : array_like</span>
+<span class="sd">            Values of all random variables in variable space in correct order.</span>
+<span class="sd">        dependencies : tuple</span>
+<span class="sd">            A 3-element tuple with one entry each for the shape, loc and scale parameters.</span>
+<span class="sd">            The entry is the index of the random variable the parameter depends on.</span>
+<span class="sd">            The index order has to be the same as in rv_values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        parameter_vals : tuple</span>
+<span class="sd">            A 3-element tuple with one entry each for the shape, loc and scale parameters.</span>
+<span class="sd">            The tuple contains the values of the parameters evaluated under the conditions</span>
+<span class="sd">            of dependencies.</span>
+<span class="sd">            The values are either float or lists of float.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">loc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">)</span>
+        <span class="n">defaults</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_loc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_scale</span><span class="p">)</span>
+        <span class="n">parameter_vals</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">param</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">parameter_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">defaults</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">dependencies</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">parameter_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_check_parameter_value</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">parameter_vals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">parameter_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="p">(</span><span class="n">rv_values</span><span class="p">[</span><span class="n">dependencies</span><span class="p">[</span><span class="n">i</span><span class="p">]]))</span>
+                <span class="k">try</span><span class="p">:</span> <span class="c1"># if list fo values iterate over values</span>
+                    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">parameter_vals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_check_parameter_value</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_check_parameter_value</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">parameter_vals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">parameter_vals</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_check_parameter_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_index</span><span class="p">,</span> <span class="n">param_value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if parameter values are within the distribution specific boundaries.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        param_index : int</span>
+<span class="sd">            Index of parameter.</span>
+<span class="sd">            (0 = &#39;shape&#39;, 1 = &#39;loc&#39;, 2 = &#39;scale&#39;)</span>
+<span class="sd">        param_value : float</span>
+<span class="sd">            Value of parameter.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If parameter value is outside the boundaries.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">param_index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">valid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valid_shape</span>
+            <span class="n">param_name</span> <span class="o">=</span> <span class="n">SHAPE_STRING</span>
+        <span class="k">elif</span> <span class="n">param_index</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">valid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valid_loc</span>
+            <span class="n">param_name</span> <span class="o">=</span> <span class="n">LOCATION_STRING</span>
+        <span class="k">elif</span> <span class="n">param_index</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">valid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valid_shape</span>
+            <span class="n">param_name</span> <span class="o">=</span> <span class="n">SCALE_STRING</span>
+
+        <span class="k">if</span> <span class="n">valid</span><span class="p">[</span><span class="s2">&quot;strict_greater&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">param_value</span> <span class="o">&gt;</span> <span class="n">valid</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Parameter out of bounds. </span><span class="si">{}</span><span class="s2"> has to be &quot;</span>
+                                 <span class="s2">&quot;strictly greater than </span><span class="si">{}</span><span class="s2">, but was </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                 <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="n">valid</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">],</span> <span class="n">param_value</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">param_value</span> <span class="o">&gt;=</span> <span class="n">valid</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Parameter out of bounds. </span><span class="si">{}</span><span class="s2"> has to be &quot;</span>
+                                 <span class="s2">&quot;greater than </span><span class="si">{}</span><span class="s2">, but was </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                 <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="n">valid</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">],</span> <span class="n">param_value</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">valid</span><span class="p">[</span><span class="s2">&quot;strict_less&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">param_value</span> <span class="o">&lt;</span> <span class="n">valid</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Parameter out of bounds. </span><span class="si">{}</span><span class="s2"> has to be &quot;</span>
+                                 <span class="s2">&quot;strictly less than </span><span class="si">{}</span><span class="s2">, but was </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                 <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="n">valid</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">],</span> <span class="n">param_value</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">param_value</span> <span class="o">&lt;=</span> <span class="n">valid</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Parameter out of bounds. </span><span class="si">{}</span><span class="s2"> has to be &quot;</span>
+                                     <span class="s2">&quot;less than </span><span class="si">{}</span><span class="s2">, but was </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                     <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="n">valid</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">],</span> <span class="n">param_value</span><span class="p">))</span>
+
+        <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span>  <span class="s2">&quot;ParametricDistribution with shape=</span><span class="si">{}</span><span class="s2">, loc=</span><span class="si">{}</span><span class="s2">,&quot;</span> \
+                    <span class="s2">&quot;scale=</span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">loc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ParametricDistribution.param_name_to_index"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.ParametricDistribution.param_name_to_index">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">param_name_to_index</span><span class="p">(</span><span class="n">param_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts a parameter name (&#39;shape&#39;, &#39;loc&#39;, &#39;scale&#39;) to the correct</span>
+<span class="sd">        parameter index used in viroconcom (either 0, 1 or 2).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        param_name : str</span>
+<span class="sd">            The name of the parameter, must be &#39;shape&#39;, &#39;loc&#39;, or &#39;scale&#39;.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        param_index : int</span>
+<span class="sd">            The index corresponding to the name of the parameter as it is</span>
+<span class="sd">            internally defined in viroconcom.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">param_index</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">param_name</span> <span class="o">==</span> <span class="n">SHAPE_STRING</span><span class="p">:</span>
+            <span class="n">param_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="n">param_name</span> <span class="o">==</span> <span class="n">LOCATION_STRING</span><span class="p">:</span>
+            <span class="n">param_index</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">param_name</span> <span class="o">==</span> <span class="n">SCALE_STRING</span><span class="p">:</span>
+            <span class="n">param_index</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong parameter name. The param_name variable &quot;</span>
+                             <span class="s2">&quot;must be either &#39;shape&#39;, &#39;loc&#39; or &#39;scale&#39;, however,&quot;</span>
+                             <span class="s2">&quot;it was </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param_name</span><span class="p">))</span></div></div>
+        <span class="k">return</span> <span class="n">param_index</span>
+
+
+<div class="viewcode-block" id="WeibullDistribution"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.WeibullDistribution">[docs]</a><span class="k">class</span> <span class="nc">WeibullDistribution</span><span class="p">(</span><span class="n">ParametricDistribution</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A Weibull distribution.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Create a WeibullDistribution and plot the cumulative distribution function:</span>
+
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
+<span class="sd">    &gt;&gt;&gt; from viroconcom.params import ConstantParam</span>
+<span class="sd">    &gt;&gt;&gt; shape = ConstantParam(1)</span>
+<span class="sd">    &gt;&gt;&gt; loc = ConstantParam(0)</span>
+<span class="sd">    &gt;&gt;&gt; scale = ConstantParam(1)</span>
+<span class="sd">    &gt;&gt;&gt; dist = WeibullDistribution(shape, loc, scale)</span>
+<span class="sd">    &gt;&gt;&gt; x = np.linspace(0, 5, num=100)</span>
+<span class="sd">    &gt;&gt;&gt; #file_example = plt.plot(x, dist.cdf(x, None, (None, None, None)),\</span>
+<span class="sd">                                            #label=&quot;Weibull&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; #legend = plt.legend()</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Weibull&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_valid_shape</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;strict_greater&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                             <span class="s2">&quot;max&quot;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="s2">&quot;strict_less&quot;</span> <span class="p">:</span> <span class="kc">True</span> <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_valid_scale</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;strict_greater&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                             <span class="s2">&quot;max&quot;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="s2">&quot;strict_less&quot;</span> <span class="p">:</span> <span class="kc">True</span> <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">_scipy_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">sts</span><span class="o">.</span><span class="n">weibull_min</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_scipy_i_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span></div>
+        <span class="k">return</span> <span class="n">sts</span><span class="o">.</span><span class="n">weibull_min</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="LognormalDistribution"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.LognormalDistribution">[docs]</a><span class="k">class</span> <span class="nc">LognormalDistribution</span><span class="p">(</span><span class="n">ParametricDistribution</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A Lognormal distribution.</span>
+
+<span class="sd">    There are two different ways to create the Lognormal distribution. You can either use the parameters ``sigma`` and</span>
+<span class="sd">    ``mu`` as *kwargs* or the parameters ``shape, None, scale`` as *args*.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Create a LognormalDistribution and plot the cumulative distribution function,</span>
+<span class="sd">    using explicit ``sigma`` and ``mu`` arguments:</span>
+
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
+<span class="sd">    &gt;&gt;&gt; from viroconcom.params import ConstantParam</span>
+<span class="sd">    &gt;&gt;&gt; my_sigma = ConstantParam(1)</span>
+<span class="sd">    &gt;&gt;&gt; my_mu = ConstantParam(0)</span>
+<span class="sd">    &gt;&gt;&gt; dist = LognormalDistribution(sigma=my_sigma, mu=my_mu)</span>
+<span class="sd">    &gt;&gt;&gt; x = np.linspace(0, 10, num=100)</span>
+<span class="sd">    &gt;&gt;&gt; #example_plot = plt.plot(x, dist.cdf(x, None, (None, None, None)),\</span>
+<span class="sd">                                            #label=&#39;Lognormal(mu, sigma)&#39;)</span>
+
+<span class="sd">    Creating the same LognormalDistribution using the ``shape`` and ``scale`` parameters:</span>
+
+<span class="sd">    &gt;&gt;&gt; shape = ConstantParam(1)</span>
+<span class="sd">    &gt;&gt;&gt; scale = ConstantParam(1)  # scale = exp(mu) = exp(0) = 1</span>
+<span class="sd">    &gt;&gt;&gt; dist = LognormalDistribution(shape, None, scale)</span>
+<span class="sd">    &gt;&gt;&gt; x = np.linspace(0, 10, num=100)</span>
+<span class="sd">    &gt;&gt;&gt; #example_plot = plt.plot(x, dist.cdf(x, None, (None, None, None)),\</span>
+<span class="sd">                                            #label=&quot;Lognormal (shape, scale)&quot;)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">saved_args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
+
+        <span class="n">loc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="s2">&quot;sigma&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="s2">&quot;mu&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">]</span>
+
+            <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span>
+            <span class="c1"># Make mu a scale parameter</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">FunctionParam</span><span class="p">):</span>
+                <span class="n">_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">_func</span>
+                <span class="n">_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">a</span>
+                <span class="n">_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">b</span>
+                <span class="n">_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">c</span>
+                <span class="c1"># Keep possibly already existing wrapper</span>
+                <span class="n">scale_wrapper</span> <span class="o">=</span> <span class="n">Wrapper</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">_wrapper</span><span class="p">)</span>
+                <span class="c1"># Create new FunctionParam so the passed one does not get altered</span>
+                <span class="n">scale</span> <span class="o">=</span> <span class="n">FunctionParam</span><span class="p">(</span><span class="n">_a</span><span class="p">,</span> <span class="n">_b</span><span class="p">,</span> <span class="n">_c</span><span class="p">,</span> <span class="s2">&quot;power3&quot;</span><span class="p">,</span> <span class="n">wrapper</span><span class="o">=</span><span class="n">scale_wrapper</span><span class="p">)</span>
+                <span class="n">scale</span><span class="o">.</span><span class="n">_func</span> <span class="o">=</span> <span class="n">_func</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">scale</span> <span class="o">=</span> <span class="n">ConstantParam</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">(</span><span class="kc">None</span><span class="p">)))</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Lognormal&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_valid_shape</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;strict_greater&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                             <span class="s2">&quot;max&quot;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="s2">&quot;strict_less&quot;</span> <span class="p">:</span> <span class="kc">True</span> <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_valid_scale</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;strict_greater&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                             <span class="s2">&quot;max&quot;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="s2">&quot;strict_less&quot;</span> <span class="p">:</span> <span class="kc">True</span> <span class="p">}</span>
+
+
+
+    <span class="k">def</span> <span class="nf">_scipy_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">sts</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_scipy_i_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">sts</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;mu&quot;</span><span class="p">):</span>
+            <span class="k">return</span>  <span class="s2">&quot;LognormalDistribution with shape=</span><span class="si">{}</span><span class="s2">, loc=</span><span class="si">{}</span><span class="s2">,&quot;</span> \
+                    <span class="s2">&quot;scale=</span><span class="si">{}</span><span class="s2">, mu=</span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">loc</span><span class="p">,</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span>  <span class="s2">&quot;LognormalDistribution with shape=</span><span class="si">{}</span><span class="s2">, loc=</span><span class="si">{}</span><span class="s2">,&quot;</span> \</div>
+                    <span class="s2">&quot;scale=</span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">loc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="NormalDistribution"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.NormalDistribution">[docs]</a><span class="k">class</span> <span class="nc">NormalDistribution</span><span class="p">(</span><span class="n">ParametricDistribution</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A Normal distribution.</span>
+
+<span class="sd">    The location (loc) keyword specifies the mean. The scale (scale) keyword specifies the standard deviation.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Create a NormalDistribution and plot the cumulative distribution function:</span>
+
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
+<span class="sd">    &gt;&gt;&gt; from viroconcom.params import ConstantParam</span>
+<span class="sd">    &gt;&gt;&gt; loc = ConstantParam(0)</span>
+<span class="sd">    &gt;&gt;&gt; scale = ConstantParam(1)</span>
+<span class="sd">    &gt;&gt;&gt; dist = NormalDistribution(None, loc, scale)</span>
+<span class="sd">    &gt;&gt;&gt; x = np.linspace(0, 5, num=100)</span>
+<span class="sd">    &gt;&gt;&gt; #example_plot = plt.plot(x, dist.cdf(x, None, (None, None, None)),\</span>
+<span class="sd">                                #label=&quot;Normal&quot;)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Normal&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_valid_scale</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;strict_greater&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                             <span class="s2">&quot;max&quot;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="s2">&quot;strict_less&quot;</span> <span class="p">:</span> <span class="kc">True</span> <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">_scipy_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">sts</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_scipy_i_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span></div>
+        <span class="k">return</span> <span class="n">sts</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MultivariateDistribution"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.MultivariateDistribution">[docs]</a><span class="k">class</span> <span class="nc">MultivariateDistribution</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A Multivariate distribution consisting of multiple univariate distributions and dependencies.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    distributions : list of Distribution</span>
+<span class="sd">        A list containing the distributions.</span>
+<span class="sd">    dependencies : list of tuples</span>
+<span class="sd">        A list containing a dependency tuple for each distribution.</span>
+<span class="sd">    n_dim : int</span>
+<span class="sd">        The number of distributions. Equal to len(distributions).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="MultivariateDistribution.__init__"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.MultivariateDistribution.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distributions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dependencies</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        distributions : list of Distribution</span>
+<span class="sd">            A list containing distributions.</span>
+<span class="sd">        dependencies : list of tuples</span>
+<span class="sd">            A list with one dependency tuple for each distribution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distributions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">distributions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_distributions</span><span class="p">(</span><span class="n">distributions</span><span class="p">,</span> <span class="n">dependencies</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MultivariateDistribution.add_distributions"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.MultivariateDistribution.add_distributions">[docs]</a>    <span class="k">def</span> <span class="nf">add_distributions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distributions</span><span class="p">,</span> <span class="n">dependencies</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add one or multiple distributions and define dependencies.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        distributions : ``Distribution`` or list of ``Distribution``</span>
+<span class="sd">            A distribution or list containing distributions.</span>
+<span class="sd">        dependencies : tuple or list of tuples</span>
+<span class="sd">            A dependency tuple or list with one dependency tuple for each distribution.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">backup</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distributions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">it</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">distributions</span><span class="p">)</span>
+            <span class="n">dist_is_iter</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="n">dist_is_iter</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Check if dependencies is a list of tuples.</span>
+            <span class="n">it</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">dependencies</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">dep_is_iter_of_tuple</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="n">dep_is_iter_of_tuple</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">dist_is_iter</span> <span class="o">!=</span> <span class="n">dep_is_iter_of_tuple</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;If distributions is iterable, so has to be dependencies &quot;</span>
+                             <span class="s2">&quot;and vise versa.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dist_is_iter</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">distributions</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dependencies</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">((</span><span class="s2">&quot;distributions and dependencies must be of the same length, &quot;</span>
+                                  <span class="s2">&quot;but where len(distributions)=</span><span class="si">{}</span><span class="s2"> and len(dependencies)=</span><span class="si">{}</span><span class="s2">.&quot;</span>
+                                  <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">distributions</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">dependencies</span><span class="p">))))</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">distributions</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">distributions</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dependencies</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">distributions</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dependencies</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distributions</span><span class="p">)</span>
+
+        <span class="n">err_msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_dependencies</span><span class="p">(</span><span class="n">dep_is_iter_of_tuple</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err_msg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">distributions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span> <span class="o">=</span> <span class="n">backup</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_check_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dep_is_iter_of_tuple</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make sure the dependencies are valid.</span>
+
+<span class="sd">        e.g. a RV can only depend on RV&#39;s that appear in order before itself.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">dimension</span><span class="p">,</span> <span class="n">dependency</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">):</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">dep_is_iter_of_tuple</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dependency</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;The length of the dependency in dimension &#39;</span><span class="si">{}</span><span class="s2">&#39; was not three.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dimension</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="kc">True</span> <span class="k">if</span> <span class="n">d</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="n">dimension</span> <span class="k">else</span> <span class="kc">False</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dependency</span><span class="p">]):</span>
+                    <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;The dependency of dimension &#39;</span><span class="si">{}</span><span class="s2">&#39; must have smaller index than dimension or &#39;None&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dimension</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="kc">True</span> <span class="k">if</span> <span class="n">d</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">d</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">False</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dependency</span><span class="p">]):</span>
+                    <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;The dependency of dimension &#39;</span><span class="si">{}</span><span class="s2">&#39; must be positive or &#39;None&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dimension</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;The length of dependencies was not three.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="MultivariateDistribution.cell_averaged_joint_pdf"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.MultivariateDistribution.cell_averaged_joint_pdf">[docs]</a>    <span class="k">def</span> <span class="nf">cell_averaged_joint_pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the cell averaged joint probabilty density function.</span>
+
+<span class="sd">        Multiplies the cell averaged probability densities of all distributions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        coords : array_like</span>
+<span class="sd">            List of the sampling points of the random variables.</span>
+<span class="sd">            The length of coords has to equal self.n_dim.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        fbar : ndarray</span>
+<span class="sd">            Cell averaged joint probabilty density function evaluated at coords.</span>
+<span class="sd">            It is a self.n_dim dimensional array,</span>
+<span class="sd">            with shape (len(coords[0]), len(coords[1]), ...)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fbar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(((</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dist_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span><span class="p">):</span>
+            <span class="n">fbar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">fbar</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_averaged_pdf</span><span class="p">(</span><span class="n">dist_index</span><span class="p">,</span> <span class="n">coords</span><span class="p">))</span>
+</div>
+        <span class="k">return</span> <span class="n">fbar</span>
+
+<div class="viewcode-block" id="MultivariateDistribution.cell_averaged_pdf"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.MultivariateDistribution.cell_averaged_pdf">[docs]</a>    <span class="k">def</span> <span class="nf">cell_averaged_pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dist_index</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the cell averaged probabilty density function of a single distribution.</span>
+
+<span class="sd">        Calculates the pdf by approximating it with the finite differential quotient</span>
+<span class="sd">        of the cumulative distributions function, evaluated at the grid cells borders.</span>
+<span class="sd">        i.e. :math:`f(x) \\approx \\frac{F(x+ 0.5\\Delta x) - F(x- 0.5\\Delta x) }{\\Delta x}`</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dist_index : int</span>
+<span class="sd">            The index of the distribution to calculate the pdf of,</span>
+<span class="sd">            according to order of self.distributions.</span>
+<span class="sd">        coords : array_like</span>
+<span class="sd">            List of the sampling points of the random variables.</span>
+<span class="sd">            The pdf is calculated at coords[dist_index].</span>
+<span class="sd">            The length of coords has to equal self.n_dim.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        fbar : ndarray</span>
+<span class="sd">            Cell averaged probabilty density function evaluated at coords[dist_index].</span>
+<span class="sd">            It is a self.n_dim dimensional array.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span><span class="p">)</span>
+        <span class="n">dimensions</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span><span class="p">)</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="n">dist_index</span><span class="p">]</span>
+        <span class="n">dependency</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">[</span><span class="n">dist_index</span><span class="p">]</span>
+        <span class="n">cdf</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">cdf</span>
+
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="n">dist_index</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">coords</span><span class="p">[</span><span class="n">dist_index</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">fbar_shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dimensions</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">dist_index</span><span class="p">))</span>
+        <span class="n">fbar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">fbar_shape</span><span class="p">)</span>
+
+        <span class="c1"># Iterate over all possible dependencies.</span>
+        <span class="n">iter_ranges</span> <span class="o">=</span> <span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">fbar_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">it</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">iter_ranges</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">multi_index</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span>
+            <span class="n">f_index</span> <span class="o">=</span> <span class="n">multi_index</span> <span class="o">+</span> <span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">),)</span>  <span class="c1"># = e.g. (i,j,:) for 3 dimensions</span>
+
+            <span class="n">current_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">multi_index</span><span class="p">):</span>
+                    <span class="n">current_point</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">multi_index</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+                <span class="k">else</span><span class="p">:</span>  <span class="c1"># random variable must be independent of this dimensions, so set to 0</span>
+                    <span class="n">current_point</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="c1"># calculate averaged pdf</span>
+            <span class="n">lower</span> <span class="o">=</span> <span class="n">cdf</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="n">dist_index</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">dx</span><span class="p">,</span> <span class="n">current_point</span><span class="p">,</span> <span class="n">dependency</span><span class="p">)</span>
+            <span class="n">upper</span> <span class="o">=</span> <span class="n">cdf</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="n">dist_index</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">dx</span><span class="p">,</span> <span class="n">current_point</span><span class="p">,</span> <span class="n">dependency</span><span class="p">)</span>
+            <span class="n">fbar</span><span class="p">[</span><span class="n">f_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">upper</span> <span class="o">-</span> <span class="n">lower</span><span class="p">)</span>  <span class="c1"># / dx</span>
+
+        <span class="c1"># Append axes until self.n_dim is reached.</span>
+        <span class="n">n_dim_shape</span> <span class="o">=</span> <span class="n">fbar_shape</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">((</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">fbar_shape</span><span class="p">))))</span>
+        <span class="n">fbar</span> <span class="o">=</span> <span class="n">fbar</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_dim_shape</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">fbar</span> <span class="o">/</span> <span class="n">dx</span>
+
+<div class="viewcode-block" id="MultivariateDistribution.latex_repr"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.MultivariateDistribution.latex_repr">[docs]</a>    <span class="k">def</span> <span class="nf">latex_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var_symbols</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the joint probabilty density function in latex format.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        var_symbols : list</span>
+<span class="sd">            List of the random variable symbols, the first letter should be</span>
+<span class="sd">             capitalized and further characters will be converged to subscripts,</span>
+<span class="sd">             an example would be  [&#39;Hs&#39;, &#39;Tp&#39;, &#39;V&#39;]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        latex_string : str</span>
+<span class="sd">            The joint pdf in latex format (without $)</span>
+<span class="sd">            E.g. f(h_s,t_p)=f_{H_s}(h_s)=</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Constants to name the scale, shape and location parameter</span>
+        <span class="n">wbl_scale</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\alpha&quot;</span>
+        <span class="n">wbl_shape</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\beta&quot;</span>
+        <span class="n">wbl_loc</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\gamma&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">var_symbols</span><span class="p">:</span>
+            <span class="n">var_symbols</span><span class="o">=</span><span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span><span class="p">):</span>
+                <span class="n">var_symbols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;X_{&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span><span class="p">):</span>
+                <span class="n">var_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">var_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_{&quot;</span> <span class="o">+</span> \
+                                 <span class="n">var_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span>
+
+        <span class="c1"># Realization symbols are not capitalized, e.g. hs for the</span>
+        <span class="c1"># realization of Hs</span>
+        <span class="c1"># Next line, thanks to: https://stackoverflow.com/questions/3840843/</span>
+        <span class="c1"># how-to-downcase-the-first-character-of-a-string</span>
+        <span class="n">downcase_first_char</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">s</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">realization_symbols</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span><span class="p">):</span>
+            <span class="n">realization_symbols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">downcase_first_char</span><span class="p">(</span><span class="n">var_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+
+        <span class="n">joint_pdf_all_symbols_w_commas</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span><span class="p">):</span>
+            <span class="n">joint_pdf_all_symbols_w_commas</span> <span class="o">+=</span> <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span>
+        <span class="n">joint_pdf_all_symbols_w_commas</span> <span class="o">=</span> <span class="n">joint_pdf_all_symbols_w_commas</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">latex_string_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">latex_string</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\text{ joint PDF: }&quot;</span>
+        <span class="n">latex_string_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">latex_string</span><span class="p">)</span>
+        <span class="n">latex_string</span> <span class="o">=</span> <span class="s2">&quot;f(&quot;</span> <span class="o">+</span> <span class="n">joint_pdf_all_symbols_w_commas</span> <span class="o">+</span> <span class="s2">&quot;)=&quot;</span>
+        <span class="n">left_side_pdfs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span><span class="p">):</span>
+            <span class="n">left_side_pdfs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="s2">&quot;f_{&quot;</span> <span class="o">+</span> <span class="n">var_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="c1"># If there is at least one depedent parameter.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+                <span class="n">left_side_pdfs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="s2">&quot;|&quot;</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span><span class="p">):</span>
+                    <span class="k">if</span>  <span class="n">j</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                        <span class="n">left_side_pdfs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">var_symbols</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span>
+                <span class="n">left_side_pdfs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">left_side_pdfs</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">left_side_pdfs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="s2">&quot;}(&quot;</span> <span class="o">+</span> <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="c1"># If there is at least one depedent parameter.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+                <span class="n">left_side_pdfs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="s2">&quot;|&quot;</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span><span class="p">):</span>
+                    <span class="k">if</span>  <span class="n">j</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                        <span class="n">left_side_pdfs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">realization_symbols</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span>
+                <span class="n">left_side_pdfs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">left_side_pdfs</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">left_side_pdfs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="s2">&quot;)&quot;</span>
+            <span class="n">latex_string</span> <span class="o">+=</span> <span class="n">left_side_pdfs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">latex_string_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">latex_string</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span><span class="p">):</span>
+            <span class="n">latex_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">latex_string_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">latex_string</span><span class="p">)</span> <span class="c1"># add a blank line</span>
+            <span class="n">latex_string_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;\text{. variable, }&quot;</span> <span class="o">+</span>
+                                     <span class="nb">str</span><span class="p">(</span><span class="n">var_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span><span class="p">)</span>
+            <span class="n">latex_string</span> <span class="o">=</span> <span class="n">left_side_pdfs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span>
+            <span class="n">scale_name</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">shape_name</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">loc_name</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Weibull&quot;</span><span class="p">:</span>
+                <span class="n">scale_name</span> <span class="o">=</span> <span class="n">wbl_scale</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;_{&quot;</span> <span class="o">+</span> <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span>
+                <span class="n">shape_name</span> <span class="o">=</span> <span class="n">wbl_shape</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;_{&quot;</span> <span class="o">+</span> <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span>
+                <span class="n">loc_name</span> <span class="o">=</span> <span class="n">wbl_loc</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;_{&quot;</span> <span class="o">+</span> <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span>
+                <span class="n">latex_string</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;\dfrac{&quot;</span> <span class="o">+</span> <span class="n">wbl_shape</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;_{&quot;</span> <span class="o">+</span> \
+                                <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> \
+                                <span class="sa">r</span><span class="s2">&quot;}}{&quot;</span> <span class="o">+</span> <span class="n">wbl_scale</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;_{&quot;</span> <span class="o">+</span> \
+                                <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> \
+                        <span class="o">+</span> <span class="s2">&quot;}}\left(\dfrac{&quot;</span> <span class="o">+</span> <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> \
+                                <span class="sa">r</span><span class="s2">&quot;-&quot;</span> <span class="o">+</span>  <span class="n">loc_name</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;}{&quot;</span> <span class="o">+</span> <span class="n">wbl_scale</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;_{&quot;</span> <span class="o">+</span> \
+                                <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> \
+                        <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;}}\right)^{&quot;</span> <span class="o">+</span> <span class="n">wbl_shape</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;_{&quot;</span> <span class="o">+</span> \
+                                <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> \
+                                <span class="sa">r</span><span class="s2">&quot;}-1}\exp\left[-\left(\dfrac{&quot;</span> <span class="o">+</span> \
+                                <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> \
+                        <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="n">loc_name</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;}{&quot;</span> <span class="o">+</span> <span class="n">wbl_scale</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;_{&quot;</span> <span class="o">+</span> \
+                                <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> \
+                                <span class="sa">r</span><span class="s2">&quot;}}\right)^{&quot;</span> <span class="o">+</span> <span class="n">wbl_shape</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;_{&quot;</span> <span class="o">+</span> \
+                                <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span>\
+                                <span class="sa">r</span><span class="s2">&quot;}}\right]&quot;</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Normal&quot;</span><span class="p">:</span>
+                <span class="n">scale_name</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\sigma_{&quot;</span> <span class="o">+</span> <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span>
+                <span class="n">loc_name</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\mu_{&quot;</span> <span class="o">+</span> <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span>
+                <span class="n">latex_string</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;\dfrac</span><span class="si">{1}</span><span class="s2">{\sqrt{2\pi&quot;</span> <span class="o">+</span> <span class="n">scale_name</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;^2}}&quot;</span>\
+                                <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;\exp\left[-\dfrac{(&quot;</span> <span class="o">+</span> \
+                                <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="n">loc_name</span> <span class="o">+</span> \
+                                <span class="sa">r</span><span class="s2">&quot;)^2}{2&quot;</span> <span class="o">+</span> <span class="n">scale_name</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;^2}\right]&quot;</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Lognormal&quot;</span><span class="p">:</span>
+                <span class="n">shape_name</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\tilde{\sigma}_{&quot;</span> <span class="o">+</span> <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span>
+
+                <span class="c1"># Here for simplicity we save mu in the &#39;scale_value&#39;</span>
+                <span class="c1"># variable, although we know scale = exp(mu)</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39;mu&#39;</span><span class="p">):</span>
+                    <span class="n">scale_name</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\tilde{\mu}_{&quot;</span> <span class="o">+</span> <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">scale_name</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\exp{\tilde{\mu}}_{&quot;</span> <span class="o">+</span> <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span>
+
+                <span class="n">latex_string</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;\dfrac</span><span class="si">{1}</span><span class="s2">{&quot;</span> <span class="o">+</span> <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> \
+                                <span class="sa">r</span><span class="s2">&quot;\tilde{\sigma}_{&quot;</span> \
+                        <span class="o">+</span> <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> \
+                                <span class="sa">r</span><span class="s2">&quot;}\sqrt{2\pi}}\exp\left[-\dfrac{(\ln &quot;</span> <span class="o">+</span> \
+                                <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> \
+                                <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;-\tilde{\mu}_{&quot;</span> <span class="o">+</span> <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> \
+                                <span class="sa">r</span><span class="s2">&quot;})^2}{2\tilde{\sigma}_{&quot;</span> \
+                        <span class="o">+</span> <span class="n">realization_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;}^2}\right]&quot;</span>
+            <span class="n">latex_string_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">latex_string</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">scale_name</span><span class="p">:</span>
+                <span class="n">latex_string</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\quad\text{ with }&quot;</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Lognormal&quot;</span><span class="p">:</span>
+
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39;mu&#39;</span><span class="p">):</span>
+                        <span class="c1"># Here for simplicity we save mu in the &#39;scale_value&#39;</span>
+                        <span class="c1"># variable, although we know scale = exp(mu)</span>
+                        <span class="n">scale_value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">scale_value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">scale</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">scale_value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">scale</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span><span class="p">):</span>
+                    <span class="k">if</span>  <span class="n">j</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                        <span class="n">scale_value</span> <span class="o">=</span> <span class="n">scale_value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                            <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">realization_symbols</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                <span class="n">latex_string</span> <span class="o">+=</span> <span class="n">scale_name</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span> <span class="n">scale_value</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span>
+                <span class="n">latex_string_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">latex_string</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">shape_name</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">scale_name</span><span class="p">:</span>
+                    <span class="n">latex_string</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\quad\qquad\;\; &quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">latex_string</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\quad\text{ with }&quot;</span>
+
+                <span class="n">shape_value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span><span class="p">):</span>
+                    <span class="k">if</span>  <span class="n">j</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                        <span class="n">shape_value</span> <span class="o">=</span> <span class="n">shape_value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                            <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">realization_symbols</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                <span class="n">latex_string</span> <span class="o">+=</span> <span class="n">shape_name</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span> <span class="n">shape_value</span>
+                <span class="k">if</span> <span class="n">loc_name</span><span class="p">:</span>
+                    <span class="n">latex_string</span> <span class="o">+=</span> <span class="s2">&quot;,&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">latex_string</span> <span class="o">+=</span> <span class="s2">&quot;.&quot;</span>
+                <span class="n">latex_string_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">latex_string</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">loc_name</span><span class="p">:</span>
+                <span class="n">latex_string</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\quad\qquad\;\; &quot;</span>
+                <span class="n">loc_value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distributions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span><span class="p">):</span>
+                    <span class="k">if</span>  <span class="n">j</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                        <span class="n">loc_value</span> <span class="o">=</span> <span class="n">loc_value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                            <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">realization_symbols</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                <span class="n">latex_string</span> <span class="o">+=</span> <span class="n">loc_name</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span> <span class="n">loc_value</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
+                <span class="n">latex_string_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">latex_string</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">latex_string_list</span>
+
+
+<div class="viewcode-block" id="KernelDensityDistribution"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.KernelDensityDistribution">[docs]</a><span class="k">class</span> <span class="nc">KernelDensityDistribution</span><span class="p">(</span><span class="n">Distribution</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A kernel density distribution.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Create a KernelDensityDistribution:</span>
+
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
+<span class="sd">    &gt;&gt;&gt; # ------------ part from fitting.py --------------</span>
+<span class="sd">    &gt;&gt;&gt; import statsmodels.api as sm</span>
+<span class="sd">    &gt;&gt;&gt; sample = np.random.RandomState(500)</span>
+<span class="sd">    &gt;&gt;&gt; p = sample.normal(10, 1, 500)</span>
+<span class="sd">    &gt;&gt;&gt; dens = sm.nonparametric.KDEUnivariate(p)</span>
+<span class="sd">    &gt;&gt;&gt; dens.fit(gridsize=2000)</span>
+<span class="sd">    &gt;&gt;&gt; list = (dens.cdf, dens.icdf)</span>
+<span class="sd">    &gt;&gt;&gt; # ------------------------------------------------</span>
+<span class="sd">    &gt;&gt;&gt; dist = KernelDensityDistribution(list)</span>
+<span class="sd">    &gt;&gt;&gt; x = np.linspace(0, 5, num=100)</span>
+<span class="sd">    &gt;&gt;&gt; #example_plot = plt.plot(x, dist.cdf(x, None, (None, None, None)),\</span>
+<span class="sd">                                #label=&#39;KernelDensity&#39;)</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="KernelDensityDistribution.__init__"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.KernelDensityDistribution.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Represents a Kernel Density distribution by using two lists that contain coordinates which</span>
+<span class="sd">        represent the cdf and icdf distribution. The Kernel Densitiy Distribution is created by the fitting process and</span>
+<span class="sd">        can then be used to build a contour.</span>
+
+<span class="sd">        Note</span>
+<span class="sd">        ----</span>
+<span class="sd">        There are no parameters such as shape, loc, scale used for the Kernel Density Distribution.</span>
+<span class="sd">        Therefor it can not be dependent.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        params : list,</span>
+<span class="sd">            Contains cdf coordinates on index 0 and icdf coordinates on index 1</span>
+<span class="sd">            params[0] -&gt; cdf</span>
+<span class="sd">            params[1] -&gt; icdf</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;KernelDensity&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cdf</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_i_cdf</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<div class="viewcode-block" id="KernelDensityDistribution.cdf"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.KernelDensityDistribution.cdf">[docs]</a>    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">rv_values</span><span class="p">,</span> <span class="n">dependencies</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the cumulative distribution function.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : array_like</span>
+<span class="sd">            Points at which to calculate the cdf.</span>
+<span class="sd">        rv_values : array_like</span>
+<span class="sd">            Values of all random variables in variable space in correct order.</span>
+<span class="sd">            This can be a 1-dimensional array with length equal to the number of</span>
+<span class="sd">            random variables N or a 2-dimensional array with shape (N, M).</span>
+<span class="sd">            If x is an array, M must be len(x).</span>
+<span class="sd">            --Not used for Kernel Density--</span>
+<span class="sd">        dependencies : tuple</span>
+<span class="sd">            A 3-element tuple with one entry each for the shape, loc and scale parameters.</span>
+<span class="sd">            The entry is the index of the random variable the parameter depends on.</span>
+<span class="sd">            The index order has to be the same as in rv_values.</span>
+<span class="sd">            --Not used for Kernel Density--</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        cdf : ndarray</span>
+<span class="sd">            Cumulative distribution function evaluated at x.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+            <span class="c1"># scale x</span>
+            <span class="n">x_point</span> <span class="o">=</span> <span class="n">point</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cdf</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_i_cdf</span><span class="p">)</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_i_cdf</span><span class="p">))</span>
+            <span class="c1"># use linear fit if x_point is between two points</span>
+            <span class="n">linear_fit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">poly1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">x_point</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">x_point</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                                              <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_cdf</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x_point</span><span class="p">)],</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">_cdf</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x_point</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]],</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">linear_fit</span><span class="p">(</span><span class="n">x_point</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="n">result</span>
+
+<div class="viewcode-block" id="KernelDensityDistribution.i_cdf"><a class="viewcode-back" href="../../api/distributions.html#viroconcom.distributions.KernelDensityDistribution.i_cdf">[docs]</a>    <span class="k">def</span> <span class="nf">i_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probability</span><span class="p">,</span> <span class="n">rv_values</span><span class="p">,</span> <span class="n">dependencies</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate percent-point function. (inverse cumulative distribution function)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        probabilities : array_like</span>
+<span class="sd">            Probabilities for which to calculate the i_cdf.</span>
+<span class="sd">        rv_values : array_like</span>
+<span class="sd">            Values of all random variables in variable space in correct order.</span>
+<span class="sd">            This can be a 1-dimensional array with length equal to the number of</span>
+<span class="sd">            random variables N or a 2-dimensional array with shape (N, M).</span>
+<span class="sd">            If probabilities is an array, M must be len(probabilities).</span>
+<span class="sd">            --Not used for Kernel Density--</span>
+<span class="sd">        dependencies : tuple</span>
+<span class="sd">            A 3-element tuple with one entry each for the shape, loc and scale parameters.</span>
+<span class="sd">            The entry is the index of the random variable the parameter depends on.</span>
+<span class="sd">            The index order has to be the same as in rv_values.</span>
+<span class="sd">            --Not used for Kernel Density--</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        i_cdf : ndarray,</span>
+<span class="sd">            Inverse cumulative distribution function evaluated for probabilities.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">probability</span><span class="p">:</span>
+            <span class="c1"># scale probability</span>
+            <span class="n">x_point</span> <span class="o">=</span> <span class="n">point</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_i_cdf</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># use linear fit if x_point is between two points</span>
+            <span class="n">linear_fit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">poly1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">x_point</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">x_point</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                                              <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_i_cdf</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x_point</span><span class="p">)],</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">_i_cdf</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x_point</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]],</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">linear_fit</span><span class="p">(</span><span class="n">x_point</span><span class="p">))</span></div></div>
+        <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">doctest</span>
+    <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+    <a id="sidebar-anchor"></a>
+    
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+      </ul>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, viroconcom.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.1.
+    </div>
+  </body>
+</html>
